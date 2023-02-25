@@ -58,6 +58,15 @@ githubのcommitコメントの書き方
 ```
 $ git clone https://github.com/Code1964/Globe-learning.git
 ```
+
+## docker使わないFlaskの実行方法
+
+```
+cd project
+pip install -r requirements.txt
+flask run
+```
+
 ## Setting up a Docker environment
 
 ```
