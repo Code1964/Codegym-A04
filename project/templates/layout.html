@@ -14,12 +14,12 @@
 
         <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-        <!-- TODO: ローカルのcssファイル読み込み -->
-        <link href="/static/css/sample.css" rel="stylesheet">
-        <!-- TODO: ローカルjsファイルを読み込み-->
-        <link href="/static/js/sample.js" rel="script">
+        <!-- ローカルのcssファイル読み込み -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sample.css') }}">
 
-        <!-- TODO: タイトルをFinanceから変更する -->
+        <!-- ローカルjsファイルを読み込み-->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/sample.js') }}"></script>
+
         <title>地球儀×歴史: {% block title %}{% endblock %}</title>
 
     </head>
@@ -27,7 +27,7 @@
     <body>
 
         <nav class="bg-light border navbar navbar-expand-md navbar-light">
-            <!-- TODO: ヘッダーを変更 -->
+            <!-- ヘッダーを変更 -->
             <div class="container-fluid">
                 <!-- 左上側 -->
                 <a class="navbar-brand" href="/"> <span>地球儀×歴史</span></a>
@@ -58,9 +58,9 @@
             {% block main %}{% endblock %}
         </main>
 
-        <!-- ?: フッターつける？ -->
         <footer class="mb-5 small text-center text-muted">
-            Data provided by <a href="https://iexcloud.io/">IEX</a>
+            <p>Copyright 2023 - <span id="currentYear"></span> Globe-learning. All rights reserved.</p>
+            <script type="text/javascript" src="{{ url_for('static', filename='js/currentYear.js') }}"></script>
         </footer>
 
     </body>
