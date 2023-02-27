@@ -6,6 +6,25 @@
 
 {% block main %}
 <!-- TODO: インデックスの中身 -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- CSSのリンクはdist.cssのみ -->
+<link rel="stylesheet" href="dist.css">
+<title>Document</title>
+</head>
+
+<body>
+<!-- 確認用にてきとうなTailwind CSSのClassNameをつけます -->
+<h1 class="text-7xl text-blue-900 bg-gray-200 p-10 m-10 w-fit">Hello TailwindCSS</h1>
+</body>
+
+</html>
 <p>This is summary.html</p>
 <p>{{ wiki_summary }}</p>
 {% endblock %}
