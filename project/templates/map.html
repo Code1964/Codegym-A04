@@ -5,5 +5,13 @@
 {% endblock %}
 
 {% block main %}
-<!-- TODO: インデックスの中身 -->
+<p>This is map.html</p>
+<form action="/summary" method="get">
+
+    <!-- TODO: name='region' をつけてsubmit -->
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" name="region" placeholder="region" type="text">
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
 {% endblock %}
