@@ -6,7 +6,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from controllers import index_controller, event_controller, map_controller, summary_controller, timeline_controller
+from controllers import index_controller, event_controller, map_controller, summary_controller, timeline_controller, login_controller, logout_controller, register_controller
 
 # Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
 app = Flask(__name__)
@@ -35,3 +35,15 @@ def summary():
 @app.route("/timeline")
 def timeline():
     return timeline_controller.timeline()
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    return login_controller.login()
+
+@app.route("/logout")
+def logout():
+    return logout_controller.logout()
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return register_controller.register()
