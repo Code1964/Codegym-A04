@@ -3,3 +3,5 @@ Flask-Session
 requests
 wikipedia
 python-dotenv
+pandas
+wikipedia-api
