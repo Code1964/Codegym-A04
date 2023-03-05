@@ -13,9 +13,8 @@ def summary():
         return redirect(url_for('map'))
 
     # キーワードで検索
-    else:
-        wikipedia.set_lang("ja")
-        search_response = wikipedia.search(region_name)
+    wikipedia.set_lang("ja")
+    search_response = wikipedia.search(region_name)
 
     #検索結果を表示
     # print('キーワード:'+ str(region_name) + 'での検索結果は' + str(len(search_response)) + '件です。')

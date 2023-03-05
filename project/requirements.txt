@@ -4,3 +4,4 @@ requests
 wikipedia
 python-dotenv
 pandas
+wikipedia-api
