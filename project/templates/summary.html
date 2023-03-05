@@ -7,7 +7,9 @@
 {% block main %}
 <main class="container-fluid py-5 text-center">
     <!-- TODO: 装飾する -->
-    <img src="{{ wiki_image }}" alt="images" width="300" height="300">
+    {% if region_image %}
+    <img src="{{ region_image }}" alt="images" width="30%">
+    {% endif %}
     <p>{{ wiki_summary }}</p>
 </main>
 {% endblock %}
