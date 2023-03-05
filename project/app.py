@@ -19,7 +19,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# app.add_url_rule("/", view_func=index)
 
 @app.route("/")
 def index():
