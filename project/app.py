@@ -14,6 +14,8 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded, Trueにすると、テンプレートが変更されたときに再読み込みする。
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+
+
 # Flaskのデフォルトである(デジタル署名された)cookie内に格納するのではなく、ローカルファイルシステム(ディスク)に格納するようにFlaskを構成
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
