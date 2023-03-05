@@ -1,15 +1,15 @@
 // google mapの機能を表示するための処理
 
 // initMap外に表示
-var marker;
+let marker;
 // 国単位か都道府県単位か市区町村単位かを変えるための変数
-var searchType = "country";
+let searchType = "country";
 // 現在の検索ステータスを文字で表示するための変数
-var message = "国";
+let message = "国";
 // マップのズームを調整するために使用
-var zoom = 5;
+let zoom = 5;
 
-var map;
+let map;
 
 // ボタンがクリックされたらserchTypeと文字を変更する
 function changeSearchType(type) {
@@ -40,9 +40,9 @@ function changeZoomType(zoomType) {
 // mapオブジェクト作成・初期化
 function initMap() {
   // 最初の位置を設定
-  var centerLatLng = new google.maps.LatLng(35.681236,139.767125);
+  let centerLatLng = new google.maps.LatLng(35.681236,139.767125);
   // マップを表示させる際の微調整
-  var mapOptions = {
+  let mapOptions = {
     // 世界規模のサイズ(数字が大きいほどズームイン)
     zoom: zoom,
     // 座標を入力
@@ -60,17 +60,17 @@ function initMap() {
   // 地図をクリックした際のイベントを追加する
   map.addListener('click', function(event) {
     // クリックされた場所の緯度経度を取得する
-    var clickLatlng = event.latLng;
+    let clickLatlng = event.latLng;
 
     // 住所を逆ジオコーディングで取得する
-    var geocoder = new google.maps.Geocoder();
+    let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'location': clickLatlng }, function(results, status) {
       if (status === 'OK') {
         if (results[0]) {
           // 取得した住所をフォームのinputにセットする
-          var addressComponents = results[0].address_components;
-          for (var i = 0; i < addressComponents.length; i++) {
-            var types = addressComponents[i].types;
+          let addressComponents = results[0].address_components;
+          for (let i = 0; i < addressComponents.length; i++) {
+            let types = addressComponents[i].types;
             // 国単位で調べたい場合
             if (searchType === 'country' && types.includes('country')) {
               // 取得した住所から国の部分だけ抽出する
