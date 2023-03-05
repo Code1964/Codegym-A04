@@ -3,3 +3,4 @@ Flask-Session
 requests
 wikipedia
 python-dotenv
+pandas

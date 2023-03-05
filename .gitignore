@@ -4,3 +4,4 @@ project/.*/
 project/__pycache__/
 project/controllers/__pycache__/
 !.github/
+flask_session
