@@ -6,7 +6,7 @@
 
 {% block main %}
     <main class='justify-center py-5 text-center'>
-        <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">国・地域</h1>
+        <!-- <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">国・地域</h1>
         <div class="py-3 px-4 pr-9 flex justify-center">
             <button class="shadow bg-blue-500 hover:bg-blue-700 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
             日本
@@ -36,7 +36,10 @@
             <button class="w-1/12 h-12 px-6 m-2 text-lg text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">800~</button>
             <button class="w-1/12 h-12 px-6 m-2 text-lg text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">900~</button>
             <button class="w-1/12 h-12 px-6 m-2 text-lg text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">1000~</button>
-        </div>
+        </div> -->
+        {% for history in historys %}
+            <h3>{{ history }}</h3>
+            <p>{{ historys[history] }}</p>
+        {% endfor %}
     </main>
 {% endblock %}
-

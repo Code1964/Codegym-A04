@@ -13,7 +13,7 @@ def timeline():
     wiki = wikipediaapi.Wikipedia("ja")
     page = wiki.page(region_name)
     if not page.exists():
-        return apology("Username already exists", 501)
+        return apology("Not in countries where data acquisition is possible", 501)
 
 
     sections = page.sections
@@ -33,5 +33,6 @@ def timeline():
 
     print(title[0])
     print(detail[0])
+    historys = dict(zip(title, detail))
 
-    return render_template("timeline.html")
+    return render_template("timeline.html", historys=historys)
