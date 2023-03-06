@@ -5,6 +5,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+from dotenv import load_dotenv
 
 from controllers import index_controller, event_controller, map_controller, summary_controller, timeline_controller, login_controller, logout_controller, register_controller
 
@@ -21,6 +22,8 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# .envファイルの内容を読み込見込む
+load_dotenv()
 # API keyがセットされていることを確認
 if not os.getenv("GOOGLE_MAPS_API_KEY"):
     raise RuntimeError("GOOGLE_MAPS_API_KEY not set")
