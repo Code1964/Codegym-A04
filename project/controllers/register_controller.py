@@ -1,22 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
+from helpers import apology
 import sqlite3
-
-# データベースに接続
-conn = sqlite3.connect('globe.db')
-
-# カーソルを取得
-cur = conn.cursor()
-
-# usersテーブルを作成するクエリを実行
-cur.execute('''CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, hash TEXT)''')
-
-# データベースに変更を反映
-conn.commit()
-
-# データベースを閉じる
-conn.close()
-
 
 def register():
     """Register user"""
@@ -27,27 +12,42 @@ def register():
         confirmation = request.form.get("confirmation")
 
         if not username:
-            return render_template("Must Give Username")
+            return apology("Must Give Username", 403)
+
+        # TODO今あるデータベースのユーザーネームと一致していた時はreturn apologyを返す
+        conn = sqlite3.connect("globe.db")
+        c = conn.cursor()
+        c.execute("SELECT username FROM users WHERE username=?", (username,))
+        user = c.fetchone()
+        c.close()
+        conn.close()
+        if user is not None:
+            return apology("Username already exists", 400)
 
         if not password:
-            return render_template("Must Give Password")
+            return apology("Must Give Password", 403)
 
         if not confirmation:
-            return render_template("Must Give Confirmation")
+            return apology("Must Give Confirmation", 403)
 
         if password != confirmation:
-            return render_template("Passwords Do Not Match")
+            return apology("Passwords Do Not Match", 403)
 
         hash = generate_password_hash(password)
 
         try:
-            # INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...)
-            # new_user = db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, hash)
-            pass
+            # ==== query ====================
+            conn = sqlite3.connect("globe.db")
+            cur = conn.cursor()
+            # 引数はタプルにすることに注意
+            cur.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, hash))
+            conn.commit()
+            cur.close()
+            conn.close()
+            # ================================
         except:
-            return render_template("Username already exists")
+            return apology("Failed to register to the database.", 500)
 
-        # session["user_id"] = new_user
         flash("ユーザー登録完了")
         return redirect("/")
         

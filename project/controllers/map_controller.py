@@ -1,10 +1,6 @@
 import os
 from flask import Flask, flash, redirect, render_template, request, session
-from dotenv import load_dotenv
 import pandas as pd
-
-# .envファイルの内容を読み込見込む
-load_dotenv()
 
 def map():
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")

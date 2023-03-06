@@ -48,13 +48,26 @@
                     Timeline
                 </a>
                 <a href="#" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">テスト用</a>
-              </div>
+                <!-- ログイン・ログアウト・新規登録機能 -->
+                {% if session["user_id"] %}
+                <a href="/logout" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+                    Log Out
+                </a>
+                {% else %}
+                <a href="/register" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+                    Register
+                </a>
+                <a href="/login" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+                    Log In
+                </a>
+                {% endif %}
+            </div>
             </div>
         </nav>
 
         <!-- ログイン・ログアウト・新規登録機能 -->
-        {% if session["user_id"] %}
-        <ul class="navbar-nav ms-auto mt-2">
+        <!-- {% if session["user_id"] %} -->
+        <!-- <ul class="navbar-nav ms-auto mt-2">
             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
         </ul>
     {% else %}
@@ -62,7 +75,7 @@
             <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
             <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
         </ul>
-    {% endif %}
+    {% endif %} -->
 
         <!-- フラッシュ機能 -->
         {% if get_flashed_messages() %}

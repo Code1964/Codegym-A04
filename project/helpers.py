@@ -35,4 +35,3 @@ def login_required(f): # 引数fは元の関数
         return f(*args, **kwargs) # ログインしていた場合はそのまま関数を返す
 
     return decorated_function
-    
