@@ -174,7 +174,10 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
   };
   // googleマップを描画
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
+  //初期マーカー
+  marker = new google.maps.Marker({
+    map: map, position: new google.maps.LatLng(centerLatLng),
+  });
   // インフォウインドウを設置する
   infoWindow.setPosition(centerLatLng);
   infoWindow.setContent(browserHasGeolocation ?
@@ -227,6 +230,26 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
           }
           // クリックした場所にカメラが移動する
           map.panTo(clickLatlng);
+          //マーカーの更新
+          marker.setMap();
+          marker = new google.maps.Marker({
+            map: map, position: clickLatlng
+          });
+          const service = new google.maps.places.PlacesService(map);
+          const request = {
+            location: event.latLng,
+            fields: ["name", "formatted_address", "rating"],
+          };
+          service.nearbySearch(request, nearbyCallback);
+          console.log(request)
+          // InfoWindowを構築してピンの上に詳細を表示します
+          let placeInfoWindow = new google.maps.InfoWindow();
+          // 表示の形式
+          placeInfoWindow.setContent('<div><strong>' + request.name + '</strong><br>' + '住所: ' + request.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + request.rating + '</div>');
+          placeInfoWindow.open(marker.map, marker);
+          currentInfoWindow.close();
+          currentInfoWindow = placeInfoWindow;
+          showPanel(request);
           // 取得した住所をformのinputにセットする
           document.querySelector('input[name="region"]').value = address;
         }
@@ -285,7 +308,6 @@ function createMarkers(places) {
     bounds.extend(place.geometry.location);
     return marker;
   });
-
   map.fitBounds(bounds);
 }
 
