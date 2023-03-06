@@ -31,5 +31,13 @@ RUN pip install --upgrade setuptools
 COPY ./project/requirements.txt .
 RUN pip install -r requirements.txt
 
+RUN apt update
+
 # apt-getが修正されたaptコマンドを使ってsqlite3をインストール
 RUN apt install sqlite3
+
+# tailwindのためのnpxのためのnpmインストール
+# https://qiita.com/irico/items/0260e93d313b9ba5dc74
+RUN apt install nodejs npm
+# https://tailwindcss.com/docs/installation
+RUN npm install -D tailwindcss
