@@ -1,5 +1,6 @@
 // google mapの機能のための処理
 
+// 遠すぎる場合にピンをまとめるための処理
 
 // 国単位か都道府県単位か市区町村単位かを変えるための変数
 let searchType = "country";
@@ -24,12 +25,24 @@ let service;
 // ピンに情報を載せる用の変数
 let infoPane;
 
+// // 複数のピンを立てる用(ログイン機能でこのピンを増やせるように設定できたらいいですね)
+// const tourStops = [
+//   // {}内はposition、""内は土地のタイトル(label)が表示される
+//   [{ lat: 34.661678, lng: 135.139114 }, "大阪"],
+//   [{ lat: 43.4211317, lng: 140.3330675 }, "北海道"],
+//   [{ lat: 25.953396, lng: 124.8892883 }, "沖縄"],
+//   [{ lat: 35.681236, lng: 139.767125 }, "東京"],
+// ];
+
 // mapオブジェクト作成・初期化
 function initMap() {
   // 境界線を使うための処理
   bounds = new google.maps.LatLngBounds();
-  // マーカー間で共有する情報ウィンドウを作成する
-  infoWindow = new google.maps.InfoWindow();
+  // ピン間で共有する情報ウィンドウを作成する
+  infoWindow = new google.maps.InfoWindow({
+    content: "",
+    disableAutoPan: true,
+  });
   // 現在の情報ウインドウ
   currentInfoWindow = infoWindow;
   // 情報を左に表示するための処理
@@ -57,7 +70,7 @@ function initMap() {
       };
       // googleマップを描画
       map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      // 境界線を設定？？？
+      // 境界線を設定
       bounds.extend(centerLatLng);
       // インフォウインドウの表示場所
       infoWindow.setPosition(centerLatLng);
@@ -67,13 +80,23 @@ function initMap() {
       map.setCenter(centerLatLng);
       // ユーザーの位置をPlaces Nearby Search関数に与える
       getNearbyPlaces(centerLatLng);
+      // 住所を逆ジオコーディングで取得する
+      let geocoder = new google.maps.Geocoder();
+      // htmlにあるinputの中身があるないかを判断する
+      let input = document.getElementById("latlng").value;
+      if (input !== undefined && input !== '') {
+        // 地図が読み込まれたときの処理を行うコード
+        google.maps.event.addListenerOnce(map, 'idle', function() {
+          // ここに地図が読み込まれたときに一度だけ実行される処理を記述する
+          // 検索欄に入っている位置情報を使って検索する
+          geocodeLatLng(geocoder, map);
+        });
+      }
       // TODO: 以下、2回書いているので一つにまとめたい
       // 地図をクリックした際のイベントを追加する
       map.addListener('click', function(event) {
         // クリックされた場所の緯度経度を取得する
         let clickLatlng = event.latLng;
-        // 住所を逆ジオコーディングで取得する
-        let geocoder = new google.maps.Geocoder();
         geocoder.geocode({ 'location': clickLatlng }, function(results, status) {
           if (status === 'OK') {
             if (results[0]) {
@@ -98,6 +121,8 @@ function initMap() {
                   break;
                 }
               }
+              // クリックした場所にカメラが移動する
+              map.panTo(clickLatlng);
               // 取得した住所をformのinputにセットする
               document.querySelector('input[name="region"]').value = address;
             }
@@ -113,15 +138,6 @@ function initMap() {
   // 位置情報を取得できなかった場合エラー処理を書く(ユーザーが拒否していない場合)
   handleLocationError(false, infoWindow);
   }
-
-  // // 複数のピンを立てる用(ログイン機能でこのピンを増やせるように設定できたらいいですね)
-  // const tourStops = [
-  //   // {}内はposition、""内は土地のタイトル(label)が表示される
-  //   [{ lat: 34.661678, lng: 135.139114 }, "大阪"],
-  //   [{ lat: 43.4211317, lng: 140.3330675 }, "北海道"],
-  //   [{ lat: 25.953396, lng: 124.8892883 }, "沖縄"],
-  //   [{ lat: 35.681236, lng: 139.767125 }, "東京"],
-  // ];
 
   // // ピンを設置する前の処理
   // tourStops.forEach(([position, title]) => {
@@ -216,6 +232,8 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
               break;
             }
           }
+          // クリックした場所にカメラが移動する
+          map.panTo(clickLatlng);
           // 取得した住所をformのinputにセットする
           document.querySelector('input[name="region"]').value = address;
         }
@@ -248,35 +266,37 @@ function nearbyCallback(results, status) {
   }
 }
 
-// 各場所の結果の位置にピンを設定する
 function createMarkers(places) {
-  places.forEach(place => {
-  let marker = new google.maps.Marker({
-    position: place.geometry.location,
-    map: map,
-    title: place.name
-  });
-  // 各マーカーにクリックイベントを追加
-  google.maps.event.addListener(marker, 'click', () => {
-    let request = {
-      placeId: place.place_id,
-      fields: ['name', 'formatted_address', 'geometry', 'rating', 'website', 'photos']
-    };
-    // ユーザーがマーカーをクリックしたときに場所の詳細を取得する。すべての場所の結果の詳細を取得したらすぐAPIの仕様上限に達してしまう
-    service.getDetails(request, (placeResult, status) => {
-      // showDetails関数を呼び出す
-      showDetails(placeResult, marker, status)
+  const markers = places.map((place, i) => {
+    const marker = new google.maps.Marker({
+      position: place.geometry.location,
+      label: (i + 1).toString(),
+      map: map,
+      title: place.name,
     });
-    toggleBounce(marker)
+    google.maps.event.addListener(marker, "click", (event) => {
+      let request = {
+        placeId: place.place_id,
+        fields: ["name", "formatted_address", "geometry", "rating", "website", "photos"],
+      };
+      service.getDetails(request, (placeResult, status) => {
+        showDetails(placeResult, marker, status);
+      });
+      // クリックした場所にカメラが移動する
+      let clickLatlng = event.latLng;
+      map.panTo(clickLatlng);
+      toggleBounce(marker);
+    });
+    bounds.extend(place.geometry.location);
+    return marker;
   });
-  // このピンの位置を含むように地図の境界を調整します
-  bounds.extend(place.geometry.location);
-  });
-  // すべてのマーカーを配置したら、マップの境界を「視領域内のすべてのマーカー」に表示するよう調整する
+
+  // 実装前
+  new MarkerClusterer({ map, markers });
   map.fitBounds(bounds);
 }
 
-// InfoWindowを構築してマーカーの上に詳細を表示します
+// InfoWindowを構築してピンの上に詳細を表示します
 function showDetails(placeResult, marker, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     let placeInfoWindow = new google.maps.InfoWindow();
@@ -326,8 +346,66 @@ function showPanel(placeResult) {
     websitePara.appendChild(websiteLink);
     infoPane.appendChild(websitePara);
   }
+  // form処理を追加する
+  let form = document.createElement('form');
+  form.action = '/summary';
+  form.method = 'GET';
+  infoPane.appendChild(form);
+  // POSTパラメーターようにinputタグを生成
+  let reqElm = document.createElement('input');
+  // nameとvalueにそれぞれPOSTしたいパラメーターを追加
+  reqElm.name = 'region';
+  reqElm.value = name.textContent;
+  reqElm.placeholder = "入力"
+  // inputを非表示にする
+  // classは一つずつ入れる必要があるため
+  const reqElmClasses = ["form-control", "mx-auto", "w-auto", "mb-3"];
+  // buttonにクラスを追加する
+  for (let i = 0; i < reqElmClasses.length; i++) {
+    reqElm.classList.add(reqElmClasses[i]);
+  }
+  // フォームタグにinputタグを追加
+  form.appendChild(reqElm);
+  // 改行
+  let br = document.createElement('br');
+  form.appendChild(br);
+  // 送信ボタンをつける
+  let submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.textContent = '送信';
+  // classは一つずつ入れる必要があるため
+  const buttonClasses = ["shadow", "bg-purple-500", "hover:bg-purple-400", "focus:shadow-outline", "focus:outline-none", "text-white", "font-bold", "py-2", "px-4", "rounded"];
+  // buttonにクラスを追加する
+  for (let i = 0; i < buttonClasses.length; i++) {
+    submitBtn.classList.add(buttonClasses[i]);
+  }
+  form.appendChild(submitBtn);
+  // bodyにフォームタグを追加
+  infoPane.appendChild(form);
   // infoPaneを開く
   infoPane.classList.add("open");
+}
+
+// 緯度経度から場所に移動する
+function geocodeLatLng(geocoder, map) {
+  // 最初に入っている緯度経度を識別する
+  let input = document.getElementById("latlng").value;
+  const latlngStr = input.split(",", 2);
+  const latlng = {
+    lat: parseFloat(latlngStr[0]),
+    lng: parseFloat(latlngStr[1]),
+  };
+  geocoder
+    .geocode({ location: latlng })
+    .then((response) => {
+      if (response.results[0]) {
+        map.setZoom(5);
+        map.setCenter(latlng);
+      } else {
+        window.alert("指定の場所に移動できませんでした");
+      }
+    })
+    .catch((e) => window.alert("Geocoder failed due to: " + e));
 }
 
 // ジャンプするアニメーション

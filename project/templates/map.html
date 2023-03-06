@@ -13,6 +13,8 @@
 {% block main %}
 <main class="container-fluid py-5 text-center">
     <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">現在、【<span id="searchTypeText" class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white">国</span>】単位で検索中です</h1>
+    <!-- このコードはないものとしてください -->
+    <input id="latlng" type="text" value="{{ locations }}" hidden />
     <div>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeSearchType('country')">国単位</button>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeSearchType('prefecture')">県単位</button>
@@ -25,12 +27,5 @@
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeZoomType('prefecture')">県単位</button>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeZoomType('city')">市単位</button>
     </div>
-
-    <form action="/summary" method="get">
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="region" placeholder="region" type="text">
-        </div>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">Submit</button>
-    </form>
 </main>
 {% endblock %}
