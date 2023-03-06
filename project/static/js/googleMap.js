@@ -25,17 +25,9 @@ let service;
 // ピンに情報を載せる用の変数
 let infoPane;
 
-// // 複数のピンを立てる用(ログイン機能でこのピンを増やせるように設定できたらいいですね)
-// const tourStops = [
-//   // {}内はposition、""内は土地のタイトル(label)が表示される
-//   [{ lat: 34.661678, lng: 135.139114 }, "大阪"],
-//   [{ lat: 43.4211317, lng: 140.3330675 }, "北海道"],
-//   [{ lat: 25.953396, lng: 124.8892883 }, "沖縄"],
-//   [{ lat: 35.681236, lng: 139.767125 }, "東京"],
-// ];
-
 // mapオブジェクト作成・初期化
 function initMap() {
+  let marker;
   // 境界線を使うための処理
   bounds = new google.maps.LatLngBounds();
   // ピン間で共有する情報ウィンドウを作成する
@@ -70,6 +62,10 @@ function initMap() {
       };
       // googleマップを描画
       map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      //初期マーカー
+      marker = new google.maps.Marker({
+        map: map, position: new google.maps.LatLng(centerLatLng),
+      });
       // 境界線を設定
       bounds.extend(centerLatLng);
       // インフォウインドウの表示場所
@@ -123,6 +119,26 @@ function initMap() {
               }
               // クリックした場所にカメラが移動する
               map.panTo(clickLatlng);
+              //マーカーの更新
+              marker.setMap();
+              marker = new google.maps.Marker({
+                map: map, position: clickLatlng
+              });
+              const service = new google.maps.places.PlacesService(map);
+              const request = {
+                location: event.latLng,
+                fields: ["name", "formatted_address", "rating"],
+              };
+              service.nearbySearch(request, nearbyCallback);
+              console.log(request)
+              // InfoWindowを構築してピンの上に詳細を表示します
+              let placeInfoWindow = new google.maps.InfoWindow();
+              // 表示の形式
+              placeInfoWindow.setContent('<div><strong>' + request.name + '</strong><br>' + '住所: ' + request.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + request.rating + '</div>');
+              placeInfoWindow.open(marker.map, marker);
+              currentInfoWindow.close();
+              currentInfoWindow = placeInfoWindow;
+              showPanel(request);
               // 取得した住所をformのinputにセットする
               document.querySelector('input[name="region"]').value = address;
             }
@@ -138,39 +154,6 @@ function initMap() {
   // 位置情報を取得できなかった場合エラー処理を書く(ユーザーが拒否していない場合)
   handleLocationError(false, infoWindow);
   }
-
-  // // ピンを設置する前の処理
-  // tourStops.forEach(([position, title]) => {
-  //   // ピンを立てる
-  //   marker = new google.maps.Marker({
-  //     position,
-  //     map,
-  //     // ピンをドラッグできるようにする(falseにしてるので動かせない)
-  //     draggable: false,
-  //     // アニメーションをつける
-  //     animation: google.maps.Animation.DROP,
-  //     // ピンにタイトルをつける(titleはピンにカーソルを近づけると表示される)
-  //     title: `${title}`,
-  //     label: `${title}`,
-  //     label: {
-  //       text: `${title}`, //ラベル文字を指定
-  //       color: '#FFFFFF', //文字の色を指定
-  //       fontSize: '10px' //文字のサイズを指定
-  //     },
-  //     // レンダリングを最適化しない(こうしないと一部が動作しない)
-  //     optimized: false,
-  //   });
-
-  //   // 各ピンに移動する処理を追加し、情報ウィンドウを設定する
-  //   marker.addListener("click", () => {
-  //     infoWindow.close();
-  //     infoWindow.setContent(marker.getTitle());
-  //     infoWindow.open(marker.getMap(), marker);
-  //     // ジャンプアニメーションを起動する
-  //     toggleBounce();
-  //   });
-  // });
-  // marker.setMap(map);
 }
 
 // 位置情報の取得でエラーが出た場合
@@ -262,8 +245,9 @@ function getNearbyPlaces(position) {
     rankBy: google.maps.places.RankBy.DISTANCE,
     // 営業している場所のみを返す
     openNow: false,
-    keyword: '大使館'
+    keyword: 'aaaaaaaaaaaaa'
   };
+  console.log(request)
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, nearbyCallback);
 }
@@ -272,15 +256,15 @@ function getNearbyPlaces(position) {
 function nearbyCallback(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // createMarkers関数を呼び出す
+    console.log(results)
     createMarkers(results);
   }
 }
 
 function createMarkers(places) {
-  const markers = places.map((place, i) => {
+  const markers = places.map((place) => {
     const marker = new google.maps.Marker({
       position: place.geometry.location,
-      label: (i + 1).toString(),
       map: map,
       title: place.name,
     });
@@ -290,6 +274,7 @@ function createMarkers(places) {
         fields: ["name", "formatted_address", "geometry", "rating", "website", "photos"],
       };
       service.getDetails(request, (placeResult, status) => {
+        console.log(placeResult)
         showDetails(placeResult, marker, status);
       });
       // クリックした場所にカメラが移動する
@@ -301,8 +286,6 @@ function createMarkers(places) {
     return marker;
   });
 
-  // 実装前
-  new MarkerClusterer({ map, markers });
   map.fitBounds(bounds);
 }
 
@@ -311,7 +294,7 @@ function showDetails(placeResult, marker, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     let placeInfoWindow = new google.maps.InfoWindow();
     // 表示の形式
-    placeInfoWindow.setContent('<div><strong>' + placeResult.name + '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
+    placeInfoWindow.setContent('<div><strong>' + placeResult.name + '</strong><br>' + '住所: ' + placeResult.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + placeResult.rating + '</div>');
     placeInfoWindow.open(marker.map, marker);
     currentInfoWindow.close();
     currentInfoWindow = placeInfoWindow;
