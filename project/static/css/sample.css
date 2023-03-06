@@ -8,8 +8,55 @@
     margin:5px;
 }
 
+/*========= Googleマップのスタイル変更処理 ===============*/
+/*参照URL https://developers.google.com/maps/documentation/javascript/examples/overlay-popup#maps_overlay_popup-css*/
+
+/* TODO: TailwindCSSで書き直す*/
+
 /* Google mapを表示するコード */
 #map {
     width: 100%;
     height: 600px;
-  }
+}
+
+/* ピンを押すと情報が出てくる処理※デフォルトでは非表示 */
+#panel {
+    height: 100%;
+    width: null;
+    background-color: white;
+    position: fixed;
+    z-index: 1;
+    overflow-x: hidden;
+    transition: all .2s ease-out;
+}
+
+.open {
+    width: 250px;
+}
+
+/* placeの詳細のスタイリング */
+.hero {
+    width: 100%;
+    height: auto;
+    max-height: 166px;
+    display: block;
+}
+
+.place,
+p {
+    font-family: 'open sans', arial, sans-serif;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.details {
+    color: darkslategrey;
+}
+
+/* TODO: ここまで */
+
+body{
+    background-image:url("https://photoshopvip.net/wp-content/uploads/2014/07/world-map-global-network-design_23-2147493736.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+}

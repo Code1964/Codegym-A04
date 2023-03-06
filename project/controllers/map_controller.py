@@ -2,24 +2,25 @@ import os
 from flask import Flask, flash, redirect, render_template, request, session
 import pandas as pd
 
-
 def map():
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    # index.htmlからmap.htmlに送るための処理
+    nation_name = request.args.get('nation')
+
+    if not nation_name:
+        return render_template("map.html", google_maps_api_key=google_maps_api_key)
 
     df = pd.read_csv("asti-datr0411wc/r0411world_utf8.csv", sep='\t') # data frameを読み込む
-    # print(df) # data frameを閲覧
-    # print(len(df)) # 198カ国
-    # print(df[df.country_code == 'GB']) # イギリス(GB)のname_jp長すぎ -> 略称(name_jps)の方がいい
-    # print(df['name_jps']) # 国の一覧
+    # 緯度経度を入れる
+    latlng_str = []
+    # 緯度を取得
+    latitudes = df[df.name_jps == nation_name]["lat"].values
+    # 経度を取得
+    longitudes = df[df.name_jps == nation_name]["lon"].values
+    for lat, lon in zip(latitudes, longitudes):
+        latlng_str.append({"lat": lat, "lng": lon})
+    # 使える形式に修正
+    locations = "{}, {}".format(latlng_str[0]['lat'], latlng_str[0]['lng'])
 
-    data = df[['name_jps', 'lat', 'lon']].values # このデータを使ってください
-    # print(data)
-
-    # 一個ずつ確認したい場合↓
-    # for row in data:
-    #     print(row) # 3つとも表示
-        # print(row[0]) # 国名
-        # print(row[0]) # 緯度
-        # print(row[0]) # 経度
-
-    return render_template("map.html", google_maps_api_key=google_maps_api_key)
+    #ここからjavascriptに変数送るのってどうやるの？
+    return render_template("map.html", google_maps_api_key=google_maps_api_key, locations=locations)
