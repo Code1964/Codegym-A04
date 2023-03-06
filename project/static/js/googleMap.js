@@ -80,6 +80,7 @@ function initMap() {
       map.setCenter(centerLatLng);
       // ユーザーの位置をPlaces Nearby Search関数に与える
       getNearbyPlaces(centerLatLng);
+      // TODO: 以下、2回書いているので一つにまとめたい
       // 住所を逆ジオコーディングで取得する
       let geocoder = new google.maps.Geocoder();
       // htmlにあるinputの中身があるないかを判断する
@@ -92,7 +93,6 @@ function initMap() {
           geocodeLatLng(geocoder, map);
         });
       }
-      // TODO: 以下、2回書いているので一つにまとめたい
       // 地図をクリックした際のイベントを追加する
       map.addListener('click', function(event) {
         // クリックされた場所の緯度経度を取得する
@@ -202,12 +202,22 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
   // ユーザーの位置をPlaces Nearby Search関数に与える
   getNearbyPlaces(centerLatLng);
   // TODO: 以下、2回書いているので一つにまとめたい
+  // 住所を逆ジオコーディングで取得する
+  let geocoder = new google.maps.Geocoder();
+  // htmlにあるinputの中身があるないかを判断する
+  let input = document.getElementById("latlng").value;
+  if (input !== undefined && input !== '') {
+    // 地図が読み込まれたときの処理を行うコード
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+      // ここに地図が読み込まれたときに一度だけ実行される処理を記述する
+      // 検索欄に入っている位置情報を使って検索する
+      geocodeLatLng(geocoder, map);
+    });
+  }
   // 地図をクリックした際のイベントを追加する
   map.addListener('click', function(event) {
     // クリックされた場所の緯度経度を取得する
     let clickLatlng = event.latLng;
-    // 住所を逆ジオコーディングで取得する
-    let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'location': clickLatlng }, function(results, status) {
       if (status === 'OK') {
         if (results[0]) {
