@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+<!-- TODO:tailwindで装飾 -->
+<main>
     <form action="/register" method="post">
         <div class="mb-3">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text" required>
@@ -17,4 +19,5 @@
         </div>
         <button class="btn btn-primary" type="submit">Register</button>
     </form>
+</main>
 {% endblock %}

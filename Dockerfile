@@ -31,5 +31,18 @@ RUN pip install --upgrade setuptools
 COPY ./project/requirements.txt .
 RUN pip install -r requirements.txt
 
+RUN apt update
+
 # apt-getが修正されたaptコマンドを使ってsqlite3をインストール
 RUN apt install sqlite3
+
+# tailwindのためのnpxのためのnpmインストール
+# https://qiita.com/irico/items/0260e93d313b9ba5dc74
+RUN apt install -y nodejs npm
+# https://tailwindcss.com/docs/installation
+# 下記は一度ファイルを作成されれれば大丈夫
+# RUN npm install -D tailwindcss
+
+# aliasを.bashrcに定義
+RUN echo 'alias fr="flask run --host=0.0.0.0"' >> ~/.bashrc
+RUN echo 'alias tw="npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch"' >> ~/.bashrc

@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
 from helpers import apology, login_required
-from controllers import index_controller, event_controller, map_controller, summary_controller, timeline_controller, login_controller, logout_controller, register_controller
+from controllers import index_controller, map_controller, country_info_controller, login_controller, logout_controller, register_controller
 
 # Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
 app = Flask(__name__)
@@ -26,8 +26,8 @@ Session(app)
 load_dotenv()
 
 # API keyがセットされていることを確認
-# if not os.getenv("GOOGLE_MAPS_API_KEY"):
-    # raise RuntimeError("GOOGLE_MAPS_API_KEY not set")
+if not os.getenv("GOOGLE_MAPS_API_KEY"):
+    raise RuntimeError("GOOGLE_MAPS_API_KEY not set")
 
 # リクエストを送った後レスポンスがcacheされないように設定している
 @app.after_request
@@ -43,21 +43,13 @@ def after_request(response):
 def index():
     return index_controller.index()
 
-@app.route("/event")
-def event():
-    return event_controller.event()
-
 @app.route("/map")
 def map():
     return map_controller.map()
 
-@app.route("/summary")
-def summary():
-    return summary_controller.summary()
-
-@app.route("/timeline")
-def timeline():
-    return timeline_controller.timeline()
+@app.route("/country_info")
+def country_info():
+    return country_info_controller.country_info()
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
