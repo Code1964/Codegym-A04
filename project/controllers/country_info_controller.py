@@ -1,5 +1,4 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-import wikipedia
 import wikipediaapi
 import json
 import requests
