@@ -53,4 +53,8 @@ p {
     color: darkslategrey;
 }
 
-/* TODO: ここまで */
+body{
+    background-image:url("https://photoshopvip.net/wp-content/uploads/2014/07/world-map-global-network-design_23-2147493736.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+}
