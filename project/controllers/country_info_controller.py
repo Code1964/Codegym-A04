@@ -25,6 +25,12 @@ def country_info():
     # print(page.summary) # 要約
     # print(page.html()) # html
     # print(page.images) #全写真url
+
+    # 要約取得
+    wiki_summary = page.summary
+
+    # =================================================
+    # イメージ
     url="https://pixabay.com/api"
 
     params={
@@ -40,26 +46,34 @@ def country_info():
     if data["totalHits"] > 0:
         region_image = data["hits"][0]["webformatURL"]
     else:
-        region_image = [] # どちらにしろ渡すので空のものをダミーで作成
+        region_image = [] # どちらにしろhtmlに渡すのでダミーを作成
 
     # ==================================================
-
+    # 歴史
     sections = page.sections
     # print(sections[1])  # section1つ目出力, 基本的に概要
 
-    title = []
-    detail = []
+    history_title = []
+    history_detail = []
+    geography_title = []
+    geography_detail = []
     for section in sections:
         if section.title == '歴史':
             for i in range(len(section.sections)):
                 text = str(section.sections[i]).split()
                 # print(text[1]) # 常に[1]がタイトル、本文の位置も決まってる
-                title.append(text[1])
+                history_title.append(text[1])
                 # print("".join(text[3:len(text)-2]))
-                detail.append("".join(text[3:len(text)-2]))
-            break
+                history_detail.append("".join(text[3:len(text)-2]))
+        if section.title == '地理':
+            for i in range(len(section.sections)):
+                text = str(section.sections[i]).split()
+                # print(text[1]) # 常に[1]がタイトル、本文の位置も決まってる
+                geography_title.append(text[1])
+                # print("".join(text[3:len(text)-2]))
+                geography_detail.append("".join(text[3:len(text)-2]))
 
-    historys = dict(zip(title, detail))
-    wiki_summary = page.summary
+    histories = dict(zip(history_title, history_detail))
+    geographies = dict(zip(geography_title, geography_detail))
 
-    return render_template("country_info.html", wiki_summary=wiki_summary, region_image=region_image, historys=historys)
+    return render_template("country_info.html", wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
