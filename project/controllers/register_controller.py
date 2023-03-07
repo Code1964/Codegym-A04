@@ -5,8 +5,8 @@ import sqlite3
 
 def register():
     """Register user"""
-    
-    if request.method == "POST":       
+
+    if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
@@ -14,7 +14,7 @@ def register():
         if not username:
             return apology("Must Give Username", 403)
 
-        # TODO今あるデータベースのユーザーネームと一致していた時はreturn apologyを返す
+        # 今あるデータベースのユーザーネームと一致していた時はreturn apologyを返す
         conn = sqlite3.connect("globe.db")
         c = conn.cursor()
         c.execute("SELECT username FROM users WHERE username=?", (username,))
@@ -50,8 +50,7 @@ def register():
 
         flash("ユーザー登録完了")
         return redirect("/")
-        
+
     # getメソッドのとき
     else:
         return render_template("register.html")
-        

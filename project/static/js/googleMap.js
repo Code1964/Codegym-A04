@@ -363,7 +363,7 @@ function showPanel(placeResult) {
   }
   // form処理を追加する
   let form = document.createElement('form');
-  form.action = '/summary';
+  form.action = '/country_info';
   form.method = 'GET';
   infoPane.appendChild(form);
   // POSTパラメーターようにinputタグを生成
