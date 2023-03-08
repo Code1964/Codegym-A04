@@ -134,7 +134,7 @@ function initMap() {
               // InfoWindowを構築してピンの上に詳細を表示します
               let placeInfoWindow = new google.maps.InfoWindow();
               // 表示の形式
-              placeInfoWindow.setContent('<div><strong>' + request.name + '</strong><br>' + '住所: ' + request.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + request.rating + '</div>');
+              placeInfoWindow.setContent('ここに場所の情報を挿入');
               placeInfoWindow.open(marker.map, marker);
               currentInfoWindow.close();
               currentInfoWindow = placeInfoWindow;
@@ -245,7 +245,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
           // InfoWindowを構築してピンの上に詳細を表示します
           let placeInfoWindow = new google.maps.InfoWindow();
           // 表示の形式
-          placeInfoWindow.setContent('<div><strong>' + request.name + '</strong><br>' + '住所: ' + request.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + request.rating + '</div>');
+          placeInfoWindow.setContent('ここに場所の情報を挿入');
           placeInfoWindow.open(marker.map, marker);
           currentInfoWindow.close();
           currentInfoWindow = placeInfoWindow;
