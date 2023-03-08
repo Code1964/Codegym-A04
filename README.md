@@ -74,24 +74,12 @@ $ docker compose up -d --build
 $ docker compose exec python3 bash
 ```
 
-aliasで上記コマンドを登録する
-
-```
-alias dce='docker compose exec python3 bash'
-```
-
 ## Launching a web application
 Go to the same directory as app.py file
 
 ```
 / cd project
 / flask run --host=0.0.0.0
-```
-
-aliasで上記コマンドを登録する
-
-```
-alias fr='flask run --host=0.0.0.0'
 ```
 
 ## 終了方法
