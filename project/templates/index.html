@@ -5,28 +5,88 @@
 {% endblock %}
 
 {% block main %}
-<main class='flex justify-center py-5 text-center'>
-    <form class="w-full max-w-lg" method="get" action="{{ url_for('map') }}">
-        <div>
-          <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どのような用途で使いますか？</h1>
-          <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-            <option>学校の勉強</option>
-            <option>地図で探索する</option>
-          </select>
-          <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どの国に行きますか？</h1>
-          <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
-            <option selected>国名を選択してください</option>
-            {% for nation in nations %}
-            <option value="{{nation}}">{{nation}}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="py-3 px-4 pr-9 flex justify-center">
-          <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-            冒険に出る
-          </button>
-        </div>
-    </form>
-</main>
+<main>
 
+    <!-- https://tailwindui.com/components/preview#component-abf8794a557c496e493e847c71fc90c7 -->
+    <div class="relative overflow-hidden bg-white">
+        <div class="pt-16 pb-80 sm:pt-24 sm:pb-40 lg:pt-40 lg:pb-48">
+            <div class="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
+                <div class="sm:max-w-lg">
+                    <h1 class="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">World Voyage</h1>
+                    <p class="mt-4 text-xl text-gray-500">This year, our new summer collection will shelter you from the harsh elements of a world that doesn't care if you live or die.</p>
+                </div>
+                <div>
+                    <div class="mt-10">
+                        <!-- Decorative image grid -->
+                        <div aria-hidden="true" class="pointer-events-none lg:absolute lg:inset-y-0 lg:mx-auto lg:w-full lg:max-w-7xl">
+                            <div class="absolute transform sm:left-1/2 sm:top-0 sm:translate-x-8 lg:left-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-8">
+                                <div class="flex items-center space-x-6 lg:space-x-8">
+
+                                    <!-- TODO: ここから画像 -->
+                                    <!-- 一枚だけ貼り付けたい場合 -->
+                                    <!-- <img src="https://photoshopvip.net/wp-content/uploads/2014/07/world-map-global-network-design_23-2147493736.jpg" alt=""> -->
+
+                                    <!-- 複数貼り付けたい場合 -->
+                                    <div class="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg sm:opacity-0 lg:opacity-100">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-01.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-02.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                    </div>
+                                    <div class="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-03.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-04.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-05.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                    </div>
+                                    <div class="grid flex-shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-06.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                        <div class="h-64 w-44 overflow-hidden rounded-lg">
+                                            <img src="https://tailwindui.com/img/ecommerce-images/home-page-03-hero-image-tile-07.jpg" alt="" class="h-full w-full object-cover object-center" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <form class="w-full max-w-lg" method="get" action="{{ url_for('map') }}">
+                            <div>
+                                <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どのような用途で使いますか？</h1>
+                                <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
+                                    <option>学校の勉強</option>
+                                    <option>地図で探索する</option>
+                                </select>
+                                <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どの国に行きますか？</h1>
+                                <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
+                                    <option selected hidden>国名を選択してください</option>
+                                    {% for nation in nations %}
+                                    <option value="{{nation}}">{{nation}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="py-3 px-4 pr-9 flex justify-center">
+                                <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                                    冒険に出る
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
 {% endblock %}
