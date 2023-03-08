@@ -1,4 +1,4 @@
-# Codegym-A04
+# World Voyage
 AA093・AA095・AA097・AA105のチームメンバーで開発しています。
 
 mainブランチではなく作業ブランチでコード編集を行うよう気をつけること
@@ -56,7 +56,7 @@ githubのcommitコメントの書き方
 
 ## Git Clone
 ```
-$ git clone https://github.com/Code1964/Globe-learning.git
+$ git clone https://github.com/Code1964/World-Voyage.git
 ```
 
 ## docker使わないFlaskの実行方法
