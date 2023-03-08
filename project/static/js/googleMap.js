@@ -387,7 +387,7 @@ function showPanel(placeResult) {
   // 送信ボタンをつける
   let submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
-  submitBtn.textContent = '送信';
+  submitBtn.textContent = '調べる';
   // classは一つずつ入れる必要があるため
   const buttonClasses = ["shadow", "bg-purple-500", "hover:bg-purple-400", "focus:shadow-outline", "focus:outline-none", "text-white", "font-bold", "py-2", "px-4", "rounded"];
   // buttonにクラスを追加する
