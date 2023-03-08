@@ -7,4 +7,4 @@ def index():
     nations = df['name_jps'].values
     # print(nations) # 国の一覧, これをindex.htmlに渡す
 
-    return render_template("index.html")
+    return render_template("index.html",nations=nations)
