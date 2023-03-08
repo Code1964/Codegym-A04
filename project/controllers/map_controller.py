@@ -6,8 +6,7 @@ def map():
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
     # index.htmlからmap.htmlに送るための処理
     nation_name = request.args.get('nation')
-    print(nation_name)
-    
+
     if not nation_name:
         return render_template("map.html", google_maps_api_key=google_maps_api_key)
 
