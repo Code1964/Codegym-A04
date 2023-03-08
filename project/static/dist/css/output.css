@@ -1095,8 +1095,14 @@ input:checked + .toggle-bg {
   margin-right: auto;
 }
 
-.mb-0 {
-  margin-bottom: 0px;
+.my-10 {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.my-9 {
+  margin-top: 2.25rem;
+  margin-bottom: 2.25rem;
 }
 
 .mb-1 {
