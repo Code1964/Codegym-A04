@@ -61,11 +61,13 @@
 
                         <form class="w-full max-w-lg" method="get" action="{{ url_for('map') }}">
                             <div>
-                                <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どのような用途で使いますか？</h1>
+
+                                <!-- <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どのような用途で使いますか？</h1>
                                 <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
                                     <option>学校の勉強</option>
                                     <option>地図で探索する</option>
-                                </select>
+                                </select> -->
+
                                 <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どの国に行きますか？</h1>
                                 <select class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
                                     <option selected hidden>国名を選択してください</option>
@@ -73,6 +75,7 @@
                                     <option value="{{nation}}">{{nation}}</option>
                                     {% endfor %}
                                 </select>
+
                             </div>
                             <div class="py-3 px-4 pr-9 flex justify-center">
                                 <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
