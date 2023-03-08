@@ -19,7 +19,7 @@ mainブランチではなく作業ブランチでコード編集を行うよう�
 2. もし作業ブランチにいる場合はmainに移動し`git switch main`，mainブランチ**を最新状態に更新**`git pull`
 3. 作業ブランチがなければ，作成し移動`git switch -c <作成したいブランチ名>`
 4. 作業ブランチで必ずコードの編集を行う．
-addとcommitの流れを繰り返す(`git status`で必ず確認)`git add .` && `git commit -m 'コメント'`
+階層がglobe-learnigのところで、addとcommitの流れを繰り返す(`git status`で必ず確認)`git add .` && `git commit -m 'コメント'` (projectでやるとうまくいかない！)
 5. **pushする前にここでまた最新のmainを取り込みまた作業ブランチに戻る**`git switch main` &&`git pull`&&`git switch <作業ブランチ>`
 6. リモートリポジトリからmainに変更があれば作業ブランチにmergeする`git merge main`
 7. githubにあげる`git push origin <作業ブランチ名 or HEAD>`
@@ -74,12 +74,24 @@ $ docker compose up -d --build
 $ docker compose exec python3 bash
 ```
 
+aliasで上記コマンドを登録する
+
+```
+alias dce='docker compose exec python3 bash'
+```
+
 ## Launching a web application
 Go to the same directory as app.py file
 
 ```
 / cd project
 / flask run --host=0.0.0.0
+```
+
+aliasで上記コマンドを登録する
+
+```
+alias fr='flask run --host=0.0.0.0'
 ```
 
 ## 終了方法
