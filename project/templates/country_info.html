@@ -14,9 +14,12 @@
     <img class="inline" src="{{ region_image }}" alt="images" width="30%" style="display: block; margin: auto;">
     {% endif %}
 
+    {% if wiki_summary %}
     <h1 class="text-3xl text-center my-6">要約</h1>
     <p>{{ wiki_summary }}</p>
+    {% endif %}
 
+    {% if histories %}
     <h1 class="text-3xl text-center my-6">歴史</h1>
     <!-- https://flowbite.com/docs/components/accordion/ -->
     <div id="accordion-collapse" data-accordion="collapse">
@@ -42,7 +45,9 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
+    {% if geographies %}
     <h1 class="text-3xl text-center my-6">地理</h1>
     <!-- https://flowbite.com/docs/components/accordion/ -->
     <!-- loop.indexで指定したidが上の歴史と被らないように10桁のものにする -->
@@ -69,6 +74,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
 </main>
 {% endblock %}
