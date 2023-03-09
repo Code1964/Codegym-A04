@@ -130,13 +130,11 @@ function initMap() {
                 fields: ["name", "formatted_address", "rating"],
               };
               service.nearbySearch(request, nearbyCallback);
-              console.log(request)
               // InfoWindowを構築してピンの上に詳細を表示します
               let placeInfoWindow = new google.maps.InfoWindow();
               // 表示の形式
               placeInfoWindow.setContent('ここに場所の情報を挿入');
               placeInfoWindow.open(marker.map, marker);
-              currentInfoWindow.close();
               currentInfoWindow = placeInfoWindow;
               showPanel(request);
               // 取得した住所をformのinputにセットする
@@ -241,13 +239,14 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
             fields: ["name", "formatted_address", "rating"],
           };
           service.nearbySearch(request, nearbyCallback);
-          console.log(request)
           // InfoWindowを構築してピンの上に詳細を表示します
           let placeInfoWindow = new google.maps.InfoWindow();
           // 表示の形式
           placeInfoWindow.setContent('ここに場所の情報を挿入');
           placeInfoWindow.open(marker.map, marker);
+          // TODO: ここは1つ目と違う
           currentInfoWindow.close();
+          // TODO: ここまで
           currentInfoWindow = placeInfoWindow;
           showPanel(request);
           // 取得した住所をformのinputにセットする
@@ -387,7 +386,7 @@ function showPanel(placeResult) {
   // 送信ボタンをつける
   let submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
-  submitBtn.textContent = '調べる';
+  submitBtn.textContent = '送信';
   // classは一つずつ入れる必要があるため
   const buttonClasses = ["shadow", "bg-purple-500", "hover:bg-purple-400", "focus:shadow-outline", "focus:outline-none", "text-white", "font-bold", "py-2", "px-4", "rounded"];
   // buttonにクラスを追加する
