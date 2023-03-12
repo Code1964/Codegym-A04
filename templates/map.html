@@ -117,20 +117,33 @@
 
 {% block main %}
 <main class="container-fluid py-5 text-center">
-    <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">現在、【<span id="searchTypeText" class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white">国</span>】単位で検索中です</h1>
-    <!-- このコードはないものとしてください -->
-    <input id="latlng" type="text" value="{{ locations }}" hidden />
-    <div>
+  <div class="flex flex-col md:flex-row">
+    <div class="md:w-1/2">
+      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">現在、【<span id="searchTypeText" class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white">国</span>】単位で検索中です</h1>
+      <!-- このコードはないものとしてください -->
+      <input id="latlng" type="text" value="{{ locations }}" hidden />
+      <div>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeSearchType('country')">国単位</button>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeSearchType('prefecture')">県単位</button>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeSearchType('city')">市単位</button>
-    </div>
-    <form action="/country_info" method="get">
-      <div class="mb-3">
-          <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text">
+        <form action="/country_info" method="get">
+          <div class="mt-3">
+              <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text">
+          </div>
+          <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+        </form>
       </div>
-      <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
-    </form>
+    </div>
+    <div class="md:w-1/2">
+      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">場所で検索中です</h1>
+      <form action="/country_info" method="get">
+        <div>
+            <input class="form-control mx-auto w-auto mb-3" name="placeName" placeholder="入力" type="text">
+        </div>
+        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+      </form>
+    </div>
+  </div>
 </main>
 <div class="neighborhood-discovery">
   <div class="places-panel panel no-scroll">
@@ -167,22 +180,6 @@
   <svg class="marker-pin" xmlns="http://www.w3.org/2000/svg" width="26" height="38" fill="none">
     <path d="M13 0C5.817 0 0 5.93 0 13.267c0 7.862 5.59 10.81 9.555 17.624C12.09 35.248 11.342 38 13 38c1.723 0 .975-2.817 3.445-7.043C20.085 24.503 26 21.162 26 13.267 26 5.93 20.183 0 13 0Z"/>
   </svg>
-</div>
-<div class="container-fluid py-5 text-center">
-  <div class="mt-1 py-3 px-4 pr-9">
-    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeZoomType('countryZoom')">大ズーム</button>
-    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeZoomType('prefectureZoom')">中ズーム</button>
-    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeZoomType('cityZoom')">小ズーム</button>
-  </div>
-  <!-- TODO: 場所の自体も調べられるようになった。使う場合はcountry_infoに機能追加してください -->
-  <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">場所で検索中です</h1>
-  <form action="/country_info" method="get">
-    <div class="mb-3">
-        <input class="form-control mx-auto w-auto mb-3" name="placeName" placeholder="入力" type="text">
-    </div>
-    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
-  </form>
-  <!-- TODO: ここまで -->
 </div>
 
 {% endblock %}

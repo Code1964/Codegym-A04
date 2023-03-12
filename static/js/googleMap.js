@@ -131,13 +131,32 @@ function NeighborhoodDiscovery(configuration) {
       }).getBounds();
     // 最初のスタート地点を表記
     mapOptions.restriction = {latLngBounds: widget.center};
-    // 地図・航空写真ボタンの配置を右にする
-    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.TOP_RIGHT};
+    // 地図・航空写真ボタンの配置を左にする
+    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.TOP_LEFT};
+    // フルスクリーンになるボタンを右下に配置する
+    mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_RIGHT};
+    mapOptions.rotateControl = true;
+    mapOptions.rotateControlOptions = {position: google.maps.ControlPosition.TOP_LEFT};
+    // ストリートビューが使えるボタンを右下に配置する
+    mapOptions.streetViewControlOptions = {position: google.maps.ControlPosition.LEFT};
+    mapOptions.zoomControlOptions = {position: google.maps.ControlPosition.LEFT};
+    mapOptions.scaleControl = true;
+    mapOptions.scaleControlOptions = {position: google.maps.ControlPosition.LEFT};
     // 地図のタイプ(航空写真+ラベル付き)
     mapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
+    // gestureHandlingを"greedy"に変更
+    mapOptions.gestureHandling = "greedy";
     widget.map = new google.maps.Map(widgetEl.querySelector('.map'), mapOptions);
     // ボタンのZoom変更に使用
     changeZoom = widget.map;
+    // Zoom量簡易変更ボタン実装
+    const zoomType = ['国ズーム','県ズーム','市ズーム']
+    const zoomControlDiv = document.createElement("div");
+    widget.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(zoomControlDiv);
+    for (let i = 0; i < zoomType.length; i++) {
+      const control = createZoomControl(zoomType[i]);
+      zoomControlDiv.appendChild(control);
+    }
     // 住所を逆ジオコーディングで取得する
     let geocoder = new google.maps.Geocoder();
     // htmlにあるinputの中身があるないかを判断する
@@ -519,7 +538,6 @@ function geocodeLatLng(geocoder, map) {
     lat: parseFloat(latlngStr[0]),
     lng: parseFloat(latlngStr[1]),
   };
-  console.log(latlng)
   geocoder
     .geocode({ location: latlng })
     .then((response) => {
@@ -536,32 +554,6 @@ function geocodeLatLng(geocoder, map) {
       }
     })
     .catch((e) => window.alert("Geocoder failed due to: " + e));
-}
-
-// ボタンがクリックされたらserchTypeと文字を変更する
-function changeSearchType(type) {
-  searchType = type;
-  if (type === 'country') {
-    message = "国";
-  } else if (type === 'prefecture') {
-    message = "県";
-  } else if (type === 'city') {
-    message = "市区町村";
-  }
-  document.getElementById('searchTypeText').innerHTML = message;
-}
-
-// ボタンがクリックされたらズーム状態を変更する
-function changeZoomType(zoomType) {
-  if (zoomType === 'countryZoom') {
-    zoom = 5;
-  } else if (zoomType === 'prefectureZoom') {
-    zoom = 10;
-  } else if (zoomType === 'cityZoom') {
-    zoom = 15;
-  }
-  // マップのズームを変更する
-  changeZoom.setZoom(zoom);
 }
 
 // 場所をクリックすると調べるフォームに飛ぶ
@@ -605,4 +597,55 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
   infoWindow.setContent(browserHasGeolocation ?
   '地理位置情報許可が拒否されました。' :
   'お使いのブラウザは位置情報をサポートしていません。');
+}
+
+// ボタンがクリックされたらserchTypeと文字を変更する
+function changeSearchType(type) {
+  searchType = type;
+  if (type === 'country') {
+    message = "国";
+  } else if (type === 'prefecture') {
+    message = "県";
+  } else if (type === 'city') {
+    message = "市区町村";
+  }
+  document.getElementById('searchTypeText').innerHTML = message;
+}
+
+// ボタンがクリックされたらズーム状態を変更する
+function changeZoomType(zoomType) {
+  if (zoomType === '国ズーム') {
+    zoom = 5;
+  } else if (zoomType === '県ズーム') {
+    zoom = 10;
+  } else if (zoomType === '市ズーム') {
+    zoom = 15;
+  }
+  // マップのズームを変更する
+  changeZoom.setZoom(zoom);
+}
+
+// Zoomボタン表示処理
+function createZoomControl(zoomType) {
+  const controlButton = document.createElement("button");
+  // ボタンのCSSを設定する
+  controlButton.style.backgroundColor = "#fff";
+  controlButton.style.border = "2px solid #fff";
+  controlButton.style.borderRadius = "3px";
+  controlButton.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+  controlButton.style.color = "rgb(25,25,25)";
+  controlButton.style.cursor = "pointer";
+  controlButton.style.fontFamily = "Roboto,Arial,sans-serif";
+  controlButton.style.fontSize = "16px";
+  controlButton.style.lineHeight = "35px";
+  controlButton.style.margin = "10px 2px 22px";
+  controlButton.style.padding = "0 10px";
+  controlButton.style.textAlign = "center";
+  controlButton.type = "button";
+  controlButton.textContent = zoomType;
+  // ボタンを押されたあとの処理
+  controlButton.addEventListener("click", () => {
+    changeZoomType(zoomType)
+  });
+  return controlButton;
 }
