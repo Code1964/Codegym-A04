@@ -5,3 +5,4 @@ wikipedia
 python-dotenv
 pandas
 wikipedia-api
+gunicorn
