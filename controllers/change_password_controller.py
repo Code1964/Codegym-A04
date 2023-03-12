@@ -40,10 +40,10 @@ def change_password():
         cur.execute("UPDATE users SET hash = ? WHERE id = ?", (new_hashed_password, session["user_id"]))
         conn.commit()
         conn.close()
-        
+
         # ユーザーIDを忘れたら
         session.clear()
-        
+
         flash('You were successfully change password!')
         # ホームページにリダイレクト
         return redirect("/")
