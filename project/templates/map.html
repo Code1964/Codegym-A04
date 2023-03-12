@@ -7,7 +7,112 @@
 {% block head %}
     <script type="text/javascript" src="{{ url_for('static', filename='js/googleMap.js') }}"></script>
     <!-- プレイス ライブラリ サービスにアクセスするにはlibraries パラメータを追加し、値として places を追加する -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_neighborhooddiscovery_v2_cADEF" async defer></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/handlebars/4.7.7/handlebars.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script>
+        const CONFIGURATION = {
+          "capabilities": {"search":true,"distances":false,"directions":false,"contacts":true,"atmospheres":true,"thumbnails":true},
+          // ピンを置く位置(追加する場合はplace IDを取得する)
+          "pois": [
+            {"placeId": "ChIJOyg_UAfzGGARc6YWLR98LOE"},
+            {"placeId": "ChIJ3XYIepA5AWAR-uzxmllSqgg"},
+            {"placeId": "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI"},
+          ],
+          "mapRadius": 9999999,
+          // 初期の位置設定
+          "mapOptions": {"center":{"lat":35.6761919,"lng":139.6503106},"streetViewControl":true,"zoom":5,"maxZoom":20,"mapId":""/** スタイルを変えられる処理 */},
+          "mapsApiKey": "{{ google_maps_api_key }}",
+        };
+
+        function initMap() {
+          new NeighborhoodDiscovery(CONFIGURATION);
+        }
+      </script>
+      {% raw %}
+      <script id="nd-place-results-tmpl" type="text/x-handlebars-template">
+        {{#each places}}
+          <li class="place-result">
+            <div class="text">
+              <button class="name">{{name}}</button>
+              <div class="info">{{type}}</div>
+            </div>
+            <button class="photo" style="background-image:url({{photos.0.urlSmall}})" aria-label="show photo in viewer"></button>
+          </li>
+        {{/each}}
+      </script>
+      <script id="nd-place-details-tmpl" type="text/x-handlebars-template">
+        <div class="navbar">
+          <button class="back-button">
+            <img class="icon" src="https://fonts.gstatic.com/s/i/googlematerialicons/arrow_back/v11/24px.svg" alt="back" />
+          </button>
+        </div>
+        <header>
+          <h2>{{name}}</h2>
+          <div class="info">
+            <a href="{{url}}" target="_blank">グーグルマップで表示する</a>
+          </div>
+          {{#if type}}
+            <div class="info">{{type}}</div>
+          {{/if}}
+        </header>
+        <div class="section">
+          {{#if address}}
+            <div class="contact">
+              <img src="https://fonts.gstatic.com/s/i/googlematerialicons/place/v10/24px.svg" alt="Address" class="icon"/>
+              <div class="text">
+                {{address}}
+              </div>
+            </div>
+          {{/if}}
+          {{#if website}}
+            <div class="contact">
+              <img src="https://fonts.gstatic.com/s/i/googlematerialicons/public/v10/24px.svg" alt="Website" class="icon"/>
+              <div class="text">
+                <a href="{{website}}" target="_blank">{{websiteDomain}}</a>
+              </div>
+            </div>
+          {{/if}}
+          {{#if phoneNumber}}
+            <div class="contact">
+              <img src="https://fonts.gstatic.com/s/i/googlematerialicons/phone/v10/24px.svg" alt="Phone number" class="icon"/>
+              <div class="text">
+                {{phoneNumber}}
+              </div>
+            </div>
+          {{/if}}
+          {{#if openingHours}}
+            <div class="contact">
+              <img src="https://fonts.gstatic.com/s/i/googlematerialicons/schedule/v12/24px.svg" alt="Opening hours" class="icon"/>
+              <div class="text">
+                {{#each openingHours}}
+                  <div>
+                    <span class="weekday">{{days}}</span>
+                    <span class="hours">{{hours}}</span>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          {{/if}}
+        </div>
+        {{#if photos}}
+          <div class="photos section">
+            {{#each photos}}
+              <button class="photo" style="background-image:url({{urlLarge}})" aria-label="show photo in viewer"></button>
+            {{/each}}
+          </div>
+        {{/if}}
+        {{#if html_attributions}}
+          <div class="section">
+            {{#each html_attributions}}
+              <p class="attribution">{{{this}}}</p>
+            {{/each}}
+          </div>
+        {{/if}}
+      </script>
+      {% endraw %}
 {% endblock %}
 
 {% block main %}
@@ -20,12 +125,64 @@
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeSearchType('prefecture')">県単位</button>
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeSearchType('city')">市単位</button>
     </div>
-    <div id="panel"></div>
-    <div id="map"></div>
-    <div class="mt-1 py-3 px-4 pr-9">
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeZoomType('country')">国単位</button>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeZoomType('prefecture')">県単位</button>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeZoomType('city')">市単位</button>
-    </div>
+    <form action="/country_info" method="get">
+      <div class="mb-3">
+          <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text">
+      </div>
+      <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+    </form>
 </main>
+<div class="neighborhood-discovery">
+  <div class="places-panel panel no-scroll">
+    <header class="navbar">
+      <div class="search-input">
+        <input class="place-search-input" placeholder="Search nearby places">
+        <button class="place-search-button">
+          <img src="https://fonts.gstatic.com/s/i/googlematerialicons/search/v11/24px.svg" alt="search"/>
+        </button>
+      </div>
+    </header>
+    <div class="results">
+      <ul class="place-results-list"></ul>
+    </div>
+    <button class="show-more-button sticky">
+      <span>更に表示</span>
+      <img class="right" src="https://fonts.gstatic.com/s/i/googlematerialicons/expand_more/v11/24px.svg" alt="expand"/>
+    </button>
+  </div>
+  <div class="details-panel panel"></div>
+  <div class="map"></div>
+  <div class="photo-modal">
+    <img alt="place photo"/>
+    <div>
+      <button class="back-button">
+        <img class="icon" src="https://fonts.gstatic.com/s/i/googlematerialicons/arrow_back/v11/24px.svg" alt="back"/>
+      </button>
+      <div class="photo-text">
+        <div class="photo-place"></div>
+        <div class="photo-attrs">Photo by <span></span></div>
+      </div>
+    </div>
+  </div>
+  <svg class="marker-pin" xmlns="http://www.w3.org/2000/svg" width="26" height="38" fill="none">
+    <path d="M13 0C5.817 0 0 5.93 0 13.267c0 7.862 5.59 10.81 9.555 17.624C12.09 35.248 11.342 38 13 38c1.723 0 .975-2.817 3.445-7.043C20.085 24.503 26 21.162 26 13.267 26 5.93 20.183 0 13 0Z"/>
+  </svg>
+</div>
+<div class="container-fluid py-5 text-center">
+  <div class="mt-1 py-3 px-4 pr-9">
+    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeZoomType('countryZoom')">大ズーム</button>
+    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeZoomType('prefectureZoom')">中ズーム</button>
+    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeZoomType('cityZoom')">小ズーム</button>
+  </div>
+  <!-- TODO: 場所の自体も調べられるようになった。使う場合はcountry_infoに機能追加してください -->
+  <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">場所で検索中です</h1>
+  <form action="/country_info" method="get">
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto mb-3" name="placeName" placeholder="入力" type="text">
+    </div>
+    <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+  </form>
+  <!-- TODO: ここまで -->
+</div>
+
 {% endblock %}

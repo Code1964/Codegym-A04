@@ -1,6 +1,4 @@
-// google mapの機能のための処理
-
-// 遠すぎる場合にピンをまとめるための処理
+'use strict';
 
 // 国単位か都道府県単位か市区町村単位かを変えるための変数
 let searchType = "country";
@@ -8,396 +6,508 @@ let searchType = "country";
 let message = "国";
 // マップのズームを調整するために使用
 let zoom = 5;
-// グローバル変数にしないと動かせない処理があるため
-let map;
-// ここからここまでの処理、という境界線を作るための変数(いらない？)
-let bounds;
-// 情報を表示するための変数
-let infoWindow;
-// 現在記してる情報を表示するための変数
-let currentInfoWindow;
-// 最初の位置を設定
-let centerLatLng;
-// マップを詳細に表示させる処理(ここに直接書き込むと表示されなかったので中身はなし)
-let mapOptions;
-// 場所のサービス情報を格納するための変数
-let service;
-// ピンに情報を載せる用の変数
-let infoPane;
+let changeZoom;
+// 県や国ではなく、場所の名前を挿入するための変数
+let placeName = "";
 
-// mapオブジェクト作成・初期化
-function initMap() {
-  let marker;
-  // 境界線を使うための処理
-  bounds = new google.maps.LatLngBounds();
-  // ピン間で共有する情報ウィンドウを作成する
-  infoWindow = new google.maps.InfoWindow({
-    content: "",
-    disableAutoPan: true,
-  });
-  // 現在の情報ウインドウ
-  currentInfoWindow = infoWindow;
-  // 情報を左に表示するための処理
-  infoPane = document.getElementById('panel');
-  // ジオロケーションを試す(位置情報取得)
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      // 取得したpositionから緯度経度を設定
-      centerLatLng = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      // マップを詳細に表示
-      mapOptions = {
-        // 世界規模のサイズ(数字が大きいほどズームイン)
-        zoom: zoom,
-        // 座標を入力
-        center: centerLatLng,
-        // 地図のタイプ(航空写真+ラベル付き)
-        mapTypeId: google.maps.MapTypeId.HYBRID,
-        // 表示しているページがスクロールできる場合はcooperativeに、できない場合はgreedyになる
-        gestureHandling: "auto",
-        // マップ上のアイコンをクリックできる
-        clickableIcons: true,
-      };
-      // googleマップを描画
-      map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      //初期マーカー
-      marker = new google.maps.Marker({
-        map: map, position: new google.maps.LatLng(centerLatLng),
-      });
-      // 境界線を設定
-      bounds.extend(centerLatLng);
-      // インフォウインドウの表示場所
-      infoWindow.setPosition(centerLatLng);
-      // インフォウインドウの表示文字
-      infoWindow.setContent('現在地はこちらです');
-      infoWindow.open(map);
-      map.setCenter(centerLatLng);
-      // ユーザーの位置をPlaces Nearby Search関数に与える
-      getNearbyPlaces(centerLatLng);
-      // TODO: 以下、2回書いているので一つにまとめたい
-      // 住所を逆ジオコーディングで取得する
-      let geocoder = new google.maps.Geocoder();
-      // htmlにあるinputの中身があるないかを判断する
-      let input = document.getElementById("latlng").value;
-      if (input !== undefined && input !== '') {
-        // 地図が読み込まれたときの処理を行うコード
-        google.maps.event.addListenerOnce(map, 'idle', function() {
-          // ここに地図が読み込まれたときに一度だけ実行される処理を記述する
-          // 検索欄に入っている位置情報を使って検索する
-          geocodeLatLng(geocoder, map);
-        });
-      }
-      // 地図をクリックした際のイベントを追加する
-      map.addListener('click', function(event) {
-        // クリックされた場所の緯度経度を取得する
-        let clickLatlng = event.latLng;
-        geocoder.geocode({ 'location': clickLatlng }, function(results, status) {
-          if (status === 'OK') {
-            if (results[0]) {
-              // 取得した住所をフォームのinputにセットする
-              let addressComponents = results[0].address_components;
-              for (let i = 0; i < addressComponents.length; i++) {
-                let types = addressComponents[i].types;
-                // 国単位で調べたい場合
-                if (searchType === 'country' && types.includes('country')) {
-                  // 取得した住所から国の部分だけ抽出する
-                  address = addressComponents[i].long_name;
-                  break;
-                } // 県単位で調べたい場合
-                else if (searchType === 'prefecture' && types.includes('administrative_area_level_1')) {
-                  // 取得した住所から県の部分だけ抽出する
-                  address = addressComponents[i].long_name;
-                  break;
-                } // 市区町村単位で調べたい場合
-                else if (searchType === 'city' && (types.includes('locality') || types.includes('administrative_area_level_2'))) {
-                  // 取得した住所から市区町村の部分だけ抽出する
-                  address = addressComponents[i].long_name;
-                  break;
-                }
-              }
-              // クリックした場所にカメラが移動する
-              map.panTo(clickLatlng);
-              //マーカーの更新
-              marker.setMap();
-              marker = new google.maps.Marker({
-                map: map, position: clickLatlng
-              });
-              const service = new google.maps.places.PlacesService(map);
-              const request = {
-                location: event.latLng,
-                fields: ["name", "formatted_address", "rating"],
-              };
-              service.nearbySearch(request, nearbyCallback);
-              // InfoWindowを構築してピンの上に詳細を表示します
-              let placeInfoWindow = new google.maps.InfoWindow();
-              // 表示の形式
-              placeInfoWindow.setContent('ここに場所の情報を挿入');
-              placeInfoWindow.open(marker.map, marker);
-              currentInfoWindow = placeInfoWindow;
-              showPanel(request);
-              // 取得した住所をformのinputにセットする
-              document.querySelector('input[name="region"]').value = address;
-            }
-          }
-        });
-      });
-      // TODO: ここまで
-  }, () => {
-      // 位置情報を取得できなかった場合エラー処理を書く(ユーザーが拒否した場合)
-      handleLocationError(true, infoWindow);
-  });
-  } else {
-  // 位置情報を取得できなかった場合エラー処理を書く(ユーザーが拒否していない場合)
-  handleLocationError(false, infoWindow);
-  }
+// 情報ウィンドウ
+let infoWindow;
+// 現在の位置情報
+let currentLatLng;
+
+/** DOM 要素を非表示にし、オプションで focusEl にフォーカスする */
+function hideElement(el, focusEl) {
+  el.style.display = 'none';
+  if (focusEl) focusEl.focus();
 }
 
-// 位置情報の取得でエラーが出た場合
-function handleLocationError(browserHasGeolocation, infoWindow) {
-  // デフォルトの設定を東京にする
-  centerLatLng = {lat: 35.681236, lng: 139.767125};
-  mapOptions = {
-    // 世界規模のサイズ(数字が大きいほどズームイン)
-    zoom: zoom,
-    // 座標を入力
-    center: centerLatLng,
-    // 地図のタイプ(航空写真+ラベル付き)
-    mapTypeId: google.maps.MapTypeId.HYBRID,
-    // 表示しているページがスクロールできる場合はcooperativeに、できない場合はgreedyになる
-    gestureHandling: "auto",
-    // マップ上のアイコンをクリックできる
-    clickableIcons: true,
-  };
-  // googleマップを描画
-  map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  //初期マーカー
-  marker = new google.maps.Marker({
-    map: map, position: new google.maps.LatLng(centerLatLng),
-  });
-  // インフォウインドウを設置する
-  infoWindow.setPosition(centerLatLng);
-  infoWindow.setContent(browserHasGeolocation ?
-  '地理位置情報許可が拒否されました。' :
-  'お使いのブラウザは位置情報をサポートしていません。');
-  infoWindow.open(map);
-  currentInfoWindow = infoWindow;
-  // ユーザーの位置をPlaces Nearby Search関数に与える
-  getNearbyPlaces(centerLatLng);
-  // TODO: 以下、2回書いているので一つにまとめたい
-  // 住所を逆ジオコーディングで取得する
-  let geocoder = new google.maps.Geocoder();
-  // htmlにあるinputの中身があるないかを判断する
-  let input = document.getElementById("latlng").value;
-  if (input !== undefined && input !== '') {
-    // 地図が読み込まれたときの処理を行うコード
-    google.maps.event.addListenerOnce(map, 'idle', function() {
-      // ここに地図が読み込まれたときに一度だけ実行される処理を記述する
-      // 検索欄に入っている位置情報を使って検索する
-      geocodeLatLng(geocoder, map);
-    });
+/** 非表示の DOM 要素を表示し、オプションで focusEl にフォーカスする */
+function showElement(el, focusEl) {
+  el.style.display = 'block';
+  if (focusEl) focusEl.focus();
+}
+
+/** スクロールして表示できないコンテンツが DOM 要素に含まれているかどうかを判断する */
+function hasHiddenContent(el) {
+  const noscroll = window.getComputedStyle(el).overflowY.includes('hidden');
+  return noscroll && el.scrollHeight > el.clientHeight;
+}
+
+/** 打った文字を大文字にし、スペースに置き換えて、場所の種類の文字列をフォーマットする */
+function formatPlaceType(str) {
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+  return capitalized.replace(/_/g, ' ');
+}
+
+/**
+ * PlaceOpeningHours オブジェクトから日ごとの営業時間の配列を構築する
+ * 同じ時間の隣接する曜日が 1つの要素に折りたたまれる
+ */
+function parseDaysHours(openingHours) {
+  const daysHours = openingHours.weekday_text.map((e) => e.split(/\:\s+/)).map((e) => ({'days': e[0].substr(0, 3), 'hours': e[1]}));
+  for (let i = 1; i < daysHours.length; i++) {
+    if (daysHours[i - 1].hours === daysHours[i].hours) {
+      if (daysHours[i - 1].days.indexOf('-') !== -1) {
+        daysHours[i - 1].days =
+            daysHours[i - 1].days.replace(/\w+$/, daysHours[i].days);
+      } else {
+        daysHours[i - 1].days += ' - ' + daysHours[i].days;
+      }
+      daysHours.splice(i--, 1);
+    }
   }
-  // 地図をクリックした際のイベントを追加する
-  map.addListener('click', function(event) {
-    // クリックされた場所の緯度経度を取得する
-    let clickLatlng = event.latLng;
-    geocoder.geocode({ 'location': clickLatlng }, function(results, status) {
-      if (status === 'OK') {
-        if (results[0]) {
-          // 取得した住所をフォームのinputにセットする
-          let addressComponents = results[0].address_components;
-          for (let i = 0; i < addressComponents.length; i++) {
-            let types = addressComponents[i].types;
-            // 国単位で調べたい場合
-            if (searchType === 'country' && types.includes('country')) {
-              // 取得した住所から国の部分だけ抽出する
-              address = addressComponents[i].long_name;
-              break;
-            } // 県単位で調べたい場合
-            else if (searchType === 'prefecture' && types.includes('administrative_area_level_1')) {
-              // 取得した住所から県の部分だけ抽出する
-              address = addressComponents[i].long_name;
-              break;
-            } // 市区町村単位で調べたい場合
-            else if (searchType === 'city' && (types.includes('locality') || types.includes('administrative_area_level_2'))) {
-              // 取得した住所から市区町村の部分だけ抽出する
-              address = addressComponents[i].long_name;
+  return daysHours;
+}
+
+/** ウィジェットのロード時に表示する POI の数 */
+const ND_NUM_PLACES_INITIAL = 5;
+
+/** 「さらに表示」ボタンがクリックされたときに表示される追加の POI の数 */
+const ND_NUM_PLACES_SHOW_MORE = 5;
+
+/** 詳細パネルに表示する場所の写真の最大数 */
+const ND_NUM_PLACE_PHOTOS_MAX = 6;
+
+/** デフォルトのマップ POI ピンが表示される最小ズームレベル */
+const ND_DEFAULT_POI_MIN_ZOOM = 5;
+
+/** ピンを立てたときのアイコン */
+// 他のアイコンは https://fonts.google.com/icons にある
+const ND_MARKER_ICONS_BY_TYPE = {
+  '_default': 'circle',
+  'restaurant': 'restaurant',
+  'cafe': 'local_cafe',
+  'bar': 'local_bar',
+  'park': 'park',
+  'museum': 'museum',
+  'supermarket': 'local_grocery_store',
+  'clothing_store': 'local_mall',
+  'home_goods_store': 'local_mall',
+  'shopping_mall': 'local_mall',
+  'secondary_school': 'school',
+  'bank': 'money',
+  'tourist_attraction': 'local_see',
+  'laundry': 'local_laundry_service',
+  'post_office': 'local_post_office',
+  'library': 'local_library',
+  'hospital': 'local_hospital',
+  'police': 'local_police',
+  'fire_station': 'local_fire_department',
+};
+
+  /**
+ * Neighborhood Discovery ウィジェットのインスタンスを次のように定義します。
+ * Maps ライブラリが読み込まれるとインスタンス化されます。
+ */
+function NeighborhoodDiscovery(configuration) {
+  const widget = this;
+  const widgetEl = document.querySelector('.neighborhood-discovery');
+
+  // 最初の位置情報を追加
+  widget.center = configuration.mapOptions.center;
+  // ピンの位置情報を追加
+  widget.places = configuration.pois || [];
+
+  // コア機能を初期化 --------------------------------------
+  initializeMap();
+  initializePlaceDetails();
+  initializeSidePanel();
+
+  // 追加機能を初期化 ----------------------------------
+  initializeSearchInput();
+
+  // 初期化関数の定義 ------------------------------------
+  /** インタラクティブ マップを初期化し、場所マーカーを追加します。 */
+  function initializeMap() {
+    // ピン間で共有する情報ウィンドウを作成する
+    infoWindow = new google.maps.InfoWindow({
+      content: "",
+      disableAutoPan: true,
+    });
+    const mapOptions = configuration.mapOptions;
+    widget.mapBounds = new google.maps.Circle({
+        center: widget.center,
+        radius: configuration.mapRadius,
+      }).getBounds();
+    // 最初のスタート地点を表記
+    mapOptions.restriction = {latLngBounds: widget.center};
+    // 地図・航空写真ボタンの配置を右にする
+    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.TOP_RIGHT};
+    // 地図のタイプ(航空写真+ラベル付き)
+    mapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
+    widget.map = new google.maps.Map(widgetEl.querySelector('.map'), mapOptions);
+    // ボタンのZoom変更に使用
+    changeZoom = widget.map;
+    // 住所を逆ジオコーディングで取得する
+    let geocoder = new google.maps.Geocoder();
+    // htmlにあるinputの中身があるないかを判断する
+    let input = document.getElementById("latlng").value;
+    if (input !== undefined && input !== '') {}
+    // indexからの値がない場合の処理
+    else {
+      // 既存の位置を入力する
+      document.getElementById("latlng").value = "35.6761919, 139.6503106";
+    }
+    // 情報ウインドウ表示
+    infoWindow.open(widget.map);
+    // 地図が読み込まれたときの処理を行うコード
+    google.maps.event.addListenerOnce(widget.map, 'idle', function() {
+      geocodeLatLng(geocoder, widget.map);
+    });
+    // 位置情報を取得できた場合とできなかった場合の処理
+    // geocodeLatLngよりあとでないと位置情報を取得できない
+    // TODO: 以下、重複している部分があるのでfunction化する
+    if (navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(position => {
+        // 地図が読み込まれたときの処理を行うコード
+        google.maps.event.addListenerOnce(widget.map, 'idle', function() {
+          geocodeLatLng(geocoder, widget.map);
+        });
+        // 取得したpositionから緯度経度を設定
+        currentLatLng = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        // インフォウインドウの表示場所
+        infoWindow.setPosition(currentLatLng);
+        widget.map.panTo(currentLatLng);
+        // インフォウインドウの表示文字
+        infoWindow.setContent('あなたの現在地はこちら！！');
+      }, () => {
+        // 情報ウインドウを入力する
+        infoWindow.setPosition(widget.center);
+        infoWindow.setContent('位置情報の取得を拒否しました');
+        widget.map.panTo(widget.center);
+      });
+    } else {
+      infoWindow.setPosition(widget.center);
+      infoWindow.setContent('位置情報を取得できませんでした');
+      widget.map.panTo(widget.center);
+    }
+    // TODO: ここまで
+    widget.map.fitBounds(widget.mapBounds, /* padding= */ 0);
+    widget.map.addListener('click', (e) => {
+      // クリックした場所にカメラが移動する
+      let clickLatlng = e.latLng;
+      widget.map.panTo(clickLatlng);
+      clickNoArea(clickLatlng, geocoder);
+      // ユーザーがベースマップから POI ピンをクリックしたかどうかを確認する
+      if (e.placeId) {
+        e.stop();
+        widget.selectPlaceById(e.placeId);
+      }
+    });
+    widget.map.addListener('zoom_changed', () => {
+      // 地図のスタイルをカスタマイズして、ズーム レベルに基づいてデフォルトの POI ピンまたはテキストを表示/非表示にする
+      const hideDefaultPoiPins = widget.map.getZoom() < ND_DEFAULT_POI_MIN_ZOOM;
+      widget.map.setOptions({
+        styles: [{
+          featureType: 'poi',
+          elementType: hideDefaultPoiPins ? 'labels' : 'labels.text',
+          stylers: [{visibility: 'off'}],
+        }],
+      });
+    });
+    const markerPath = widgetEl.querySelector('.marker-pin path').getAttribute('d');
+    const drawMarker = function(title, position, fillColor, strokeColor, labelText) {
+      return new google.maps.Marker({
+        title: title,
+        position: position,
+        map: widget.map,
+        icon: {
+          path: markerPath,
+          fillColor: fillColor,
+          fillOpacity: 1,
+          strokeColor: strokeColor,
+          anchor: new google.maps.Point(13, 35),
+          labelOrigin: new google.maps.Point(13, 13),
+        },
+        label: {
+          text: labelText,
+          color: 'white',
+          fontSize: '16px',
+          fontFamily: 'Material Icons',
+        },
+      });
+    };
+
+    // 指定された Place オブジェクトにマーカーを追加する
+    widget.addPlaceMarker = function(place) {
+      place.marker = drawMarker(place.name, place.coords, '#EA4335', '#C5221F', place.icon);
+      place.marker.addListener('click', () => {
+        // Place を選択する処理
+        void widget.selectPlaceById(place.placeId);
+        // グローバル変数に代入
+        placeName = place.name
+        // 取得した住所をformのinputにセットする
+        document.querySelector('input[name="placeName"]').value = placeName;
+      });
+    };
+
+    // 初期設定の位置からスタート
+    widget.updateBounds = function() {
+      const bounds = new google.maps.LatLngBounds(widget.center);
+      widget.map.fitBounds(bounds, /* padding= */ 200);
+    };
+
+    // オートコンプリート検索から場所を強調表示するために使用されるマーカー
+    widget.selectedPlaceMarker = new google.maps.Marker({title: 'Point of Interest'});
+  }
+
+  /** ウィジェットの Place Details サービスを初期化 */
+  function initializePlaceDetails() {
+    const detailsService = new google.maps.places.PlacesService(widget.map);
+    const placeIdsToDetails = new Map();  // プレイスの結果を保持するオブジェクトを作成
+
+    for (let place of widget.places) {
+      placeIdsToDetails.set(place.placeId, place);
+      place.fetchedFields = new Set(['place_id']);
+    }
+
+    widget.fetchPlaceDetails = function(placeId, fields, callback) {
+      if (!placeId || !fields) return;
+      // Place オブジェクトにフィールドが存在するかどうかを確認
+      let place = placeIdsToDetails.get(placeId);
+      if (!place) {
+        place = {placeId: placeId, fetchedFields: new Set(['place_id'])};
+        placeIdsToDetails.set(placeId, place);
+      }
+      const missingFields = fields.filter((field) => !place.fetchedFields.has(field));
+      if (missingFields.length === 0) {
+        callback(place);
+        return;
+      }
+
+      const request = {placeId: placeId, fields: missingFields};
+      let retryCount = 0;
+      const processResult = function(result, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+          // クエリの上限に達した場合は、別の呼び出しを行う前に待機する
+          // 指数バックオフを使用して、連続する各再試行の待機時間を増やす
+          // 試行が 5 回失敗すると終了する
+          if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT &&
+              retryCount < 5) {
+            const delay = (Math.pow(2, retryCount) + Math.random()) * 500;
+            setTimeout(() => void detailsService.getDetails(request, processResult), delay);
+            retryCount++;
+          }
+          return;
+        }
+
+        // 基本的な詳細(左側に出てるやつ)
+        if (result.name) place.name = result.name;
+        if (result.geometry) place.coords = result.geometry.location;
+        if (result.formatted_address) place.address = result.formatted_address;
+        // ディスプレイサイズによって表示サイズを変える
+        if (result.photos) {
+          place.photos = result.photos.map((photo) => ({
+            urlSmall: photo.getUrl({maxWidth: 200, maxHeight: 200}),
+            urlLarge: photo.getUrl({maxWidth: 1200, maxHeight: 1200}),
+            attrs: photo.html_attributions,
+          })).slice(0, ND_NUM_PLACE_PHOTOS_MAX);
+        }
+        if (result.types) {
+          place.type = formatPlaceType(result.types[0]);
+          place.icon = ND_MARKER_ICONS_BY_TYPE['_default'];
+          for (let type of result.types) {
+            if (type in ND_MARKER_ICONS_BY_TYPE) {
+              place.type = formatPlaceType(type);
+              place.icon = ND_MARKER_ICONS_BY_TYPE[type];
               break;
             }
           }
-          // クリックした場所にカメラが移動する
-          map.panTo(clickLatlng);
-          //マーカーの更新
-          marker.setMap();
-          marker = new google.maps.Marker({
-            map: map, position: clickLatlng
-          });
-          const service = new google.maps.places.PlacesService(map);
-          const request = {
-            location: event.latLng,
-            fields: ["name", "formatted_address", "rating"],
-          };
-          service.nearbySearch(request, nearbyCallback);
-          // InfoWindowを構築してピンの上に詳細を表示します
-          let placeInfoWindow = new google.maps.InfoWindow();
-          // 表示の形式
-          placeInfoWindow.setContent('ここに場所の情報を挿入');
-          placeInfoWindow.open(marker.map, marker);
-          // TODO: ここは1つ目と違う
-          currentInfoWindow.close();
-          // TODO: ここまで
-          currentInfoWindow = placeInfoWindow;
-          showPanel(request);
-          // 取得した住所をformのinputにセットする
-          document.querySelector('input[name="region"]').value = address;
+        }
+        if (result.url) place.url = result.url;
+
+        // 連絡先の詳細
+        if (result.website) {
+          place.website = result.website;
+          const url = new URL(place.website);
+          place.websiteDomain = url.hostname;
+        }
+        if (result.formatted_phone_number) place.phoneNumber = result.formatted_phone_number;
+        if (result.opening_hours) place.openingHours = parseDaysHours(result.opening_hours);
+        for (let field of missingFields) {
+          place.fetchedFields.add(field);
+        }
+        callback(place);
+      };
+
+      // Place Autocomplete の結果があればそれを表示する
+      if (widget.placeIdsToAutocompleteResults) {
+        const autoCompleteResult = widget.placeIdsToAutocompleteResults.get(placeId);
+        if (autoCompleteResult) {
+          processResult(autoCompleteResult, google.maps.places.PlacesServiceStatus.OK);
+          return;
         }
       }
-    });
-  });
-  // TODO: ここまで
-}
-
-// TODO: 範囲指定の箇所を正して意味のあるピン立てをする
-// 範囲検索する
-function getNearbyPlaces(position) {
-  // 現在地の付近を取得
-  let request = {
-    location: position,
-    rankBy: google.maps.places.RankBy.DISTANCE,
-    // 営業している場所のみを返す
-    openNow: false,
-    keyword: 'aaaaaaaaaaaaa'
-  };
-  console.log(request)
-  service = new google.maps.places.PlacesService(map);
-  service.nearbySearch(request, nearbyCallback);
-}
-
-// NearbySearch関数の結果(最大 20)を処理する
-function nearbyCallback(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    // createMarkers関数を呼び出す
-    console.log(results)
-    createMarkers(results);
+      detailsService.getDetails(request, processResult);
+    };
   }
-}
 
-function createMarkers(places) {
-  const markers = places.map((place) => {
-    const marker = new google.maps.Marker({
-      position: place.geometry.location,
-      map: map,
-      title: place.name,
-    });
-    google.maps.event.addListener(marker, "click", (event) => {
-      let request = {
-        placeId: place.place_id,
-        fields: ["name", "formatted_address", "geometry", "rating", "website", "photos"],
-      };
-      service.getDetails(request, (placeResult, status) => {
-        console.log(placeResult)
-        showDetails(placeResult, marker, status);
+  /** 精選された POI の結果を保持するサイド パネルを初期化 */
+  function initializeSidePanel() {
+    const placesPanelEl = widgetEl.querySelector('.places-panel');
+    const detailsPanelEl = widgetEl.querySelector('.details-panel');
+    const placeResultsEl = widgetEl.querySelector('.place-results-list');
+    const showMoreButtonEl = widgetEl.querySelector('.show-more-button');
+    const photoModalEl = widgetEl.querySelector('.photo-modal');
+    const detailsTemplate = Handlebars.compile(
+        document.getElementById('nd-place-details-tmpl').innerHTML);
+    const resultsTemplate = Handlebars.compile(
+        document.getElementById('nd-place-results-tmpl').innerHTML);
+
+    // 指定された POI 写真をモーダルで表示する
+    const showPhotoModal = function(photo, placeName) {
+      const prevFocusEl = document.activeElement;
+      const imgEl = photoModalEl.querySelector('img');
+      imgEl.src = photo.urlLarge;
+      const backButtonEl = photoModalEl.querySelector('.back-button');
+      backButtonEl.addEventListener('click', () => {
+        hideElement(photoModalEl, prevFocusEl);
+        imgEl.src = '';
       });
-      // クリックした場所にカメラが移動する
-      let clickLatlng = event.latLng;
-      map.panTo(clickLatlng);
-      toggleBounce(marker);
+      photoModalEl.querySelector('.photo-place').innerHTML = placeName;
+      photoModalEl.querySelector('.photo-attrs span').innerHTML = photo.attrs;
+      const attributionEl = photoModalEl.querySelector('.photo-attrs a');
+      if (attributionEl) attributionEl.setAttribute('target', '_blank');
+      photoModalEl.addEventListener('click', (e) => {
+        if (e.target === photoModalEl) {
+          hideElement(photoModalEl, prevFocusEl);
+          imgEl.src = '';
+        }
+      });
+      showElement(photoModalEl, backButtonEl);
+    };
+
+    // ID で場所を選択し、詳細を表示
+    let selectedPlaceId;
+    widget.selectPlaceById = function(placeId, panToMarker) {
+      if (selectedPlaceId === placeId) return;
+      selectedPlaceId = placeId;
+      const prevFocusEl = document.activeElement;
+      const showDetailsPanel = function(place) {
+        detailsPanelEl.innerHTML = detailsTemplate(place);
+        const backButtonEl = detailsPanelEl.querySelector('.back-button');
+        backButtonEl.addEventListener('click', () => {
+          hideElement(detailsPanelEl, prevFocusEl);
+          selectedPlaceId = undefined;
+          widget.selectedPlaceMarker.setMap(null);
+        });
+        detailsPanelEl.querySelectorAll('.photo').forEach((photoEl, i) => {
+          photoEl.addEventListener('click', () => {
+            showPhotoModal(place.photos[i], place.name);
+          });
+        });
+        showElement(detailsPanelEl, backButtonEl);
+        detailsPanelEl.scrollTop = 0;
+      };
+      const processResult = function(place) {
+        if (place.marker) {
+          widget.selectedPlaceMarker.setMap(null);
+        } else {
+          widget.selectedPlaceMarker.setPosition(place.coords);
+          widget.selectedPlaceMarker.setMap(widget.map);
+        }
+        if (panToMarker) {
+          widget.map.panTo(place.coords);
+        }
+        // 住所がある場所の名前をセットする処理
+        document.querySelector('input[name="placeName"]').value = place.name;        showDetailsPanel(place);
+      };
+
+      widget.fetchPlaceDetails(placeId, [
+        'name', 'types', 'geometry.location', 'formatted_address', 'photo', 'url',
+        'website', 'formatted_phone_number', 'opening_hours',
+      ], processResult);
+    };
+
+    // 指定されたプレイス オブジェクトをレンダリングし、POI リストに追加
+    const renderPlaceResults = function(places, startIndex) {
+      placeResultsEl.insertAdjacentHTML('beforeend', resultsTemplate({places: places}));
+      placeResultsEl.querySelectorAll('.place-result').forEach((resultEl, i) => {
+        const place = places[i - startIndex];
+        if (!place) return;
+        // アイテムのどこかをクリックすると、その場所が選択される
+        // さらに、この動作を行うボタン要素を作成
+        // タブ ナビゲーションでアクセス可能
+        resultEl.addEventListener('click', () => {
+          widget.selectPlaceById(place.placeId, /* panToMarker= */ true);
+        });
+        resultEl.querySelector('.name').addEventListener('click', (e) => {
+          widget.selectPlaceById(place.placeId, /* panToMarker= */ true);
+          e.stopPropagation();
+        });
+        resultEl.querySelector('.photo').addEventListener('click', (e) => {
+          showPhotoModal(place.photos[0], place.name);
+          e.stopPropagation();
+        });
+        widget.addPlaceMarker(place);
+      });
+    };
+    // POI リストに表示する次の Place オブジェクトのインデックス。
+    let nextPlaceIndex = 0;
+
+    // 次の N 桁の基本情報を取得して表示する
+    const showNextPlaces = function(n) {
+      const nextPlaces = widget.places.slice(nextPlaceIndex, nextPlaceIndex + n);
+      if (nextPlaces.length < 1) {
+        hideElement(showMoreButtonEl);
+        return;
+      }
+      showMoreButtonEl.disabled = true;
+      // 終了していない Places 呼び出しの数を追跡する
+      let count = nextPlaces.length;
+      for (let place of nextPlaces) {
+        const processResult = function(place) {
+          count--;
+          if (count > 0) return;
+          renderPlaceResults(nextPlaces, nextPlaceIndex);
+          nextPlaceIndex += n;
+          widget.updateBounds(widget.places.slice(0, nextPlaceIndex));
+          const hasMorePlacesToShow = nextPlaceIndex < widget.places.length;
+          if (hasMorePlacesToShow || hasHiddenContent(placesPanelEl)) {
+            showElement(showMoreButtonEl);
+            showMoreButtonEl.disabled = false;
+          } else {
+            hideElement(showMoreButtonEl);
+          }
+        };
+        widget.fetchPlaceDetails(place.placeId, [
+          'name', 'types', 'geometry.location', 'photo',
+        ], processResult);
+      }
+    };
+    showNextPlaces(ND_NUM_PLACES_INITIAL);
+
+    showMoreButtonEl.addEventListener('click', () => {
+      placesPanelEl.classList.remove('no-scroll');
+      showMoreButtonEl.classList.remove('sticky');
+      showNextPlaces(ND_NUM_PLACES_SHOW_MORE);
     });
-    bounds.extend(place.geometry.location);
-    return marker;
-  });
-  map.fitBounds(bounds);
-}
+  }
 
-// InfoWindowを構築してピンの上に詳細を表示します
-function showDetails(placeResult, marker, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    let placeInfoWindow = new google.maps.InfoWindow();
-    // 表示の形式
-    placeInfoWindow.setContent('<div><strong>' + placeResult.name + '</strong><br>' + '住所: ' + placeResult.formatted_address + '</strong><br>' + 'Rating: ' + '</strong><br>' + placeResult.rating + '</div>');
-    placeInfoWindow.open(marker.map, marker);
-    currentInfoWindow.close();
-    currentInfoWindow = placeInfoWindow;
-    showPanel(placeResult);
-  } else {
-    console.log('表示に失敗しました: ' + status);
-  }
-}
+  /** ウィジェットの検索入力を初期化する */
+  function initializeSearchInput() {
+    const searchInputEl = widgetEl.querySelector('.place-search-input');
+    widget.placeIdsToAutocompleteResults = new Map();
 
-// placeの詳細をサイドバーに表示
-function showPanel(placeResult) {
-  // infoPaneが既に開いている場合は閉じる
-  if (infoPane.classList.contains("open")) {
-    infoPane.classList.remove("open");
+    // 検索入力でオートコンプリートを設定する
+    const autocomplete = new google.maps.places.Autocomplete(searchInputEl, {
+      types: ['establishment'],
+      fields: [
+        'place_id', 'name', 'types', 'geometry.location', 'formatted_address', 'photo', 'url', 'website', 'formatted_phone_number', 'opening_hours',
+      ],
+      bounds: widget.mapBounds,
+      strictBounds: true,
+    });
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      widget.placeIdsToAutocompleteResults.set(place.place_id, place);
+      widget.selectPlaceById(place.place_id, /* panToMarker= */ true);
+      searchInputEl.value = '';
+    });
   }
-  // 前に表示された詳細をクリアする
-  while (infoPane.lastChild) {
-    infoPane.removeChild(infoPane.lastChild);
-  }
-  // テキスト形式で場所の詳細を追加する
-  let name = document.createElement('h1');
-  name.classList.add('place');
-  name.textContent = placeResult.name;
-  infoPane.appendChild(name);
-  if (placeResult.rating != null) {
-    let rating = document.createElement('p');
-    rating.classList.add('details');
-    rating.textContent = `Rating: ${placeResult.rating} \u272e`;
-    infoPane.appendChild(rating);
-  }
-  let address = document.createElement('p');
-  address.classList.add('details');
-  address.textContent = placeResult.formatted_address;
-  infoPane.appendChild(address);
-  if (placeResult.website) {
-    let websitePara = document.createElement('p');
-    let websiteLink = document.createElement('a');
-    let websiteUrl = document.createTextNode(placeResult.website);
-    websiteLink.appendChild(websiteUrl);
-    websiteLink.title = placeResult.website;
-    websiteLink.href = placeResult.website;
-    websitePara.appendChild(websiteLink);
-    infoPane.appendChild(websitePara);
-  }
-  // form処理を追加する
-  let form = document.createElement('form');
-  form.action = '/country_info';
-  form.method = 'GET';
-  infoPane.appendChild(form);
-  // POSTパラメーターようにinputタグを生成
-  let reqElm = document.createElement('input');
-  // nameとvalueにそれぞれPOSTしたいパラメーターを追加
-  reqElm.name = 'region';
-  reqElm.value = name.textContent;
-  reqElm.placeholder = "入力"
-  // inputを非表示にする
-  // classは一つずつ入れる必要があるため
-  const reqElmClasses = ["form-control", "mx-auto", "w-auto", "mb-3"];
-  // buttonにクラスを追加する
-  for (let i = 0; i < reqElmClasses.length; i++) {
-    reqElm.classList.add(reqElmClasses[i]);
-  }
-  // フォームタグにinputタグを追加
-  form.appendChild(reqElm);
-  // 改行
-  let br = document.createElement('br');
-  form.appendChild(br);
-  // 送信ボタンをつける
-  let submitBtn = document.createElement('button');
-  submitBtn.type = 'submit';
-  submitBtn.textContent = '調べる';
-  // classは一つずつ入れる必要があるため
-  const buttonClasses = ["shadow", "bg-purple-500", "hover:bg-purple-400", "focus:shadow-outline", "focus:outline-none", "text-white", "font-bold", "py-2", "px-4", "rounded"];
-  // buttonにクラスを追加する
-  for (let i = 0; i < buttonClasses.length; i++) {
-    submitBtn.classList.add(buttonClasses[i]);
-  }
-  form.appendChild(submitBtn);
-  // bodyにフォームタグを追加
-  infoPane.appendChild(form);
-  // infoPaneを開く
-  infoPane.classList.add("open");
 }
 
 // 緯度経度から場所に移動する
@@ -409,12 +519,18 @@ function geocodeLatLng(geocoder, map) {
     lat: parseFloat(latlngStr[0]),
     lng: parseFloat(latlngStr[1]),
   };
+  console.log(latlng)
   geocoder
     .geocode({ location: latlng })
     .then((response) => {
       if (response.results[0]) {
         map.setZoom(5);
         map.setCenter(latlng);
+        // 応急措置で位置情報をスタート地点にする
+        if (latlng.lat !== 35.6761919 && latlng.lat !== 139.6503106) {
+          infoWindow.setPosition(latlng);
+          infoWindow.setContent('ここからスタート！！');
+        }
       } else {
         window.alert("指定の場所に移動できませんでした");
       }
@@ -422,19 +538,10 @@ function geocodeLatLng(geocoder, map) {
     .catch((e) => window.alert("Geocoder failed due to: " + e));
 }
 
-// ジャンプするアニメーション
-function toggleBounce(marker) {
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
-  } else {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-  }
-}
-
 // ボタンがクリックされたらserchTypeと文字を変更する
 function changeSearchType(type) {
   searchType = type;
-  if (type === "country") {
+  if (type === 'country') {
     message = "国";
   } else if (type === 'prefecture') {
     message = "県";
@@ -446,15 +553,56 @@ function changeSearchType(type) {
 
 // ボタンがクリックされたらズーム状態を変更する
 function changeZoomType(zoomType) {
-  if (zoomType === "country") {
+  if (zoomType === 'countryZoom') {
     zoom = 5;
-  } else if (zoomType === 'prefecture') {
+  } else if (zoomType === 'prefectureZoom') {
     zoom = 10;
-  } else if (zoomType === 'city') {
+  } else if (zoomType === 'cityZoom') {
     zoom = 15;
   }
   // マップのズームを変更する
-  map.setZoom(zoom);
+  changeZoom.setZoom(zoom);
 }
 
-window.initMap = initMap;
+// 場所をクリックすると調べるフォームに飛ぶ
+function clickNoArea(latlng, geocoder) {
+  geocoder.geocode({ 'location': latlng }, function(results) {
+    let clickAddress;
+      if (results[0]) {
+        // 取得した住所をフォームのinputにセットする
+        let addressComponents = results[0].address_components;
+        for (let i = 0; i < addressComponents.length; i++) {
+          let types = addressComponents[i].types;
+          // 国単位で調べたい場合
+          if (searchType === 'country' && types.includes('country')) {
+            // 取得した住所から国の部分だけ抽出する
+            clickAddress = addressComponents[i].long_name;
+            break;
+          } // 県単位で調べたい場合
+          else if (searchType === 'prefecture' && types.includes('administrative_area_level_1')) {
+            // 取得した住所から県の部分だけ抽出する
+            clickAddress = addressComponents[i].long_name;
+            break;
+          } // 市区町村単位で調べたい場合
+          else if (searchType === 'city' && (types.includes('locality') || types.includes('administrative_area_level_2'))) {
+            // 取得した住所から市区町村の部分だけ抽出する
+            clickAddress = addressComponents[i].long_name;
+            break;
+          }
+        }
+        // 取得した住所をformのinputにセットする
+        document.querySelector('input[name="region"]').value = clickAddress;
+      }
+  })
+}
+
+// 位置情報の取得でエラーが出た場合
+function handleLocationError(browserHasGeolocation, infoWindow) {
+  // デフォルトの設定を東京にする
+  const centerLatLng = {lat: 35.681236, lng: 139.767125};
+  // インフォウインドウを設置する
+  infoWindow.setPosition(centerLatLng);
+  infoWindow.setContent(browserHasGeolocation ?
+  '地理位置情報許可が拒否されました。' :
+  'お使いのブラウザは位置情報をサポートしていません。');
+}
