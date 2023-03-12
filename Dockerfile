@@ -1,48 +1,44 @@
-# docker hubから既にあるpythonを持ってくる
-FROM python:3
+# Use an official Python runtime as a parent image
+# 最新の3.10ではなく3.9にする, slimにして使用頻度の低いツールやライブラリを除外したスリムなDockerイメージを作成
+FROM python:3.9-slim
 
-# rootユーザーに指定
-USER root
+# Set the working directory to /app
+WORKDIR /app
 
-RUN apt-get update
-RUN apt-get -y install locales && \
-    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+# Copy the current directory contents into the container at /app
+COPY . .
 
+# Install system packages
+RUN apt-get update \
+    && apt-get -y install locales sqlite3 nodejs npm \
+    && localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 \
+    && echo 'alias tw="npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch"' >> ~/.bashrc
+
+# Set environment variables
+ENV PYTHONUNBUFFERED True
 ENV LANG ja_JP.UTF-8
 ENV LANGUAGE ja_JP:ja
 ENV LC_ALL ja_JP.UTF-8
 ENV TERM xterm
-
-# flaskデフォルトの5000portは既に使われていたので8000に変更
-ENV FLASK_RUN_PORT 8000
-
-# flaskデバッグモードをオンにする
-ENV FLASK_DEBUG 1
-
-# タイムゾーンを指定
-# apscheduler使う時のtzlocal.utils.ZoneInfoNotFoundError対策
-# https://laid-back-scientist.com/docker-jp
 ENV TZ Asia/Tokyo
+ENV PORT 8080
 
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
+# Upgrade pip and setuptools
+RUN pip install --upgrade pip setuptools
 
-# 必要なライブラリをインストール
-COPY ./project/requirements.txt .
-RUN pip install -r requirements.txt
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt update
-
-# apt-getが修正されたaptコマンドを使ってsqlite3をインストール
-RUN apt install sqlite3
-
-# tailwindのためのnpxのためのnpmインストール
-# https://qiita.com/irico/items/0260e93d313b9ba5dc74
-RUN apt install -y nodejs npm
-# https://tailwindcss.com/docs/installation
-# 下記は一度ファイルを作成されれれば大丈夫
+# Install Tailwind CSS
 # RUN npm install -D tailwindcss
 
-# aliasを.bashrcに定義
-RUN echo 'alias fr="flask run --host=0.0.0.0"' >> ~/.bashrc
-RUN echo 'alias tw="npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch"' >> ~/.bashrc
+# Expose port 8080 for the container
+EXPOSE 8080
+
+# Run the web service on container startup. Here we use the gunicorn
+# webserver, with one worker process and 8 threads.
+# For environments with multiple CPU cores, increase the number of workers
+# to be equal to the cores available.
+# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
