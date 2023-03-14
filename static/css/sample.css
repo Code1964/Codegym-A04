@@ -8,7 +8,7 @@
 /* Google mapを表示するコード */
 
 html, body {
-    height: 600px;
+    height: 100%;
     margin: 0;
     padding: 0;
   }
@@ -84,7 +84,8 @@ html, body {
     top: 0;
   }
 
-  @media only screen and (max-width: 640px) {
+  /* 768pxくらいの画面サイズ(TailwindCSSで言えばmdの状態)になればUIが変わる */
+  @media only screen and (max-width: 768px) {
     .neighborhood-discovery .panel {
       right: 0;
       top: 50%;

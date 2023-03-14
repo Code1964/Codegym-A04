@@ -9,11 +9,12 @@ let zoom = 5;
 let changeZoom;
 // 県や国ではなく、場所の名前を挿入するための変数
 let placeName = "";
-
 // 情報ウィンドウ
 let infoWindow;
 // 現在の位置情報
 let currentLatLng;
+//ストリートビュー機能用の変数
+let panorama;
 
 /** DOM 要素を非表示にし、オプションで focusEl にフォーカスする */
 function hideElement(el, focusEl) {
@@ -134,30 +135,38 @@ function NeighborhoodDiscovery(configuration) {
     // 地図・航空写真ボタンの配置を左にする
     mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.TOP_LEFT};
     // フルスクリーンになるボタンを右下に配置する
-    mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_RIGHT};
+    mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT};
     mapOptions.rotateControl = true;
-    mapOptions.rotateControlOptions = {position: google.maps.ControlPosition.TOP_LEFT};
-    // ストリートビューが使えるボタンを右下に配置する
-    mapOptions.streetViewControlOptions = {position: google.maps.ControlPosition.LEFT};
-    mapOptions.zoomControlOptions = {position: google.maps.ControlPosition.LEFT};
+    mapOptions.rotateControlOptions = {position: google.maps.ControlPosition.LEFT_BOTTOM};
+    // ストリートビューが使えるボタンを左に配置する
+    mapOptions.streetViewControlOptions = {position: google.maps.ControlPosition.LEFT_BOTTOM};
+    // ズームボタンを右下に配置する
+    mapOptions.zoomControlOptions = {position: google.maps.ControlPosition.RIGHT_BOTTOM};
     mapOptions.scaleControl = true;
     mapOptions.scaleControlOptions = {position: google.maps.ControlPosition.LEFT};
     // 地図のタイプ(航空写真+ラベル付き)
     mapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
-    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.RIGHT_TOP};
+    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.RIGHT};
     // gestureHandlingを"greedy"に変更
     mapOptions.gestureHandling = "greedy";
     widget.map = new google.maps.Map(widgetEl.querySelector('.map'), mapOptions);
     // ボタンのZoom変更に使用
     changeZoom = widget.map;
+    // 地図のパノラマを取得する
+    panorama = widget.map.getStreetView();
     // Zoom量簡易変更ボタン実装
-    const zoomType = ['国ズーム','県ズーム','市ズーム']
+    const zoomType = ['国','県','市']
     const zoomControlDiv = document.createElement("div");
-    widget.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(zoomControlDiv);
+    widget.map.controls[google.maps.ControlPosition.LEFT_TOP].push(zoomControlDiv);
     for (let i = 0; i < zoomType.length; i++) {
       const control = createZoomControl(zoomType[i]);
       zoomControlDiv.appendChild(control);
     }
+    // ストリートビューボタン生成処理
+    const streetControlDiv = document.createElement("div");
+    const streetButton = createStreetControl();
+    streetControlDiv.appendChild(streetButton);
+    widget.map.controls[google.maps.ControlPosition.TOP_LEFT].push(streetControlDiv);
     // 住所を逆ジオコーディングで取得する
     let geocoder = new google.maps.Geocoder();
     // htmlにあるinputの中身があるないかを判断する
@@ -217,6 +226,7 @@ function NeighborhoodDiscovery(configuration) {
         e.stop();
         widget.selectPlaceById(e.placeId);
       }
+      streetLocation(clickLatlng, widget.map)
     });
     widget.map.addListener('zoom_changed', () => {
       // 地図のスタイルをカスタマイズして、ズーム レベルに基づいてデフォルトの POI ピンまたはテキストを表示/非表示にする
@@ -262,6 +272,8 @@ function NeighborhoodDiscovery(configuration) {
         placeName = place.name
         // 取得した住所をformのinputにセットする
         document.querySelector('input[name="placeName"]').value = placeName;
+        // ストリートビューを表示する関数
+        streetLocation(place.coords, widget.map);
       });
     };
 
@@ -437,6 +449,8 @@ function NeighborhoodDiscovery(configuration) {
         document.querySelector('input[name="placeID"]').value = placeId;
         // 住所がある場所の名前をセットする処理
         document.querySelector('input[name="placeName"]').value = place.name;
+        // サイドバーからもストリートビューを表示できるようにする関数
+        streetLocation(place.coords, widget.map);
         showDetailsPanel(place);
       };
 
@@ -622,11 +636,11 @@ function changeSearchType(type) {
 
 // ボタンがクリックされたらズーム状態を変更する
 function changeZoomType(zoomType) {
-  if (zoomType === '国ズーム') {
+  if (zoomType === '国') {
     zoom = 5;
-  } else if (zoomType === '県ズーム') {
+  } else if (zoomType === '県') {
     zoom = 10;
-  } else if (zoomType === '市ズーム') {
+  } else if (zoomType === '市') {
     zoom = 15;
   }
   // マップのズームを変更する
@@ -646,14 +660,77 @@ function createZoomControl(zoomType) {
   controlButton.style.fontFamily = "Roboto,Arial,sans-serif";
   controlButton.style.fontSize = "16px";
   controlButton.style.lineHeight = "35px";
-  controlButton.style.margin = "10px 2px 22px";
+  controlButton.style.margin = "10px 2px 2px 8px";
   controlButton.style.padding = "0 10px";
   controlButton.style.textAlign = "center";
   controlButton.type = "button";
   controlButton.textContent = zoomType;
   // ボタンを押されたあとの処理
   controlButton.addEventListener("click", () => {
-    changeZoomType(zoomType)
+    changeZoomType(zoomType);
   });
   return controlButton;
+}
+
+// ストリートビュー表示座標追加
+function streetLocation(latlng, map) {
+  // ストリートビューボタン処理
+  const service = new google.maps.StreetViewService();
+  // 一見dataは使われていないようだが、これがないと機能しない
+  service.getPanorama({location: latlng, radius: 50}, (data, status) => {
+    // ストリートビューの画像が存在するか確認する処理
+    if (status === google.maps.StreetViewStatus.OK) {
+      // ストリートビュー画像が存在する場合の処理
+      panorama = map.getStreetView();
+      panorama.setPosition(latlng);
+      panorama.setPov({
+        heading: 265,
+        pitch: 0,
+      });
+      document.querySelector('button[name="streetChange"]').textContent = "ストリートビュー";
+      document.querySelector('button[name="streetChange"]').disabled = false;
+    } else {
+      // ストリートビュー画像が存在しない場合の処理
+      document.querySelector('button[name="streetChange"]').textContent = "切替不可";
+      document.querySelector('button[name="streetChange"]').disabled = true;
+    }
+  });
+}
+
+// ストリートビュー切り替えるボタン生成処理
+function createStreetControl() {
+  const streetButton = document.createElement("button");
+  // ボタンのCSSを設定する
+  streetButton.style.backgroundColor = "#fff";
+  streetButton.style.border = "2px solid #fff";
+  streetButton.style.borderRadius = "3px";
+  streetButton.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+  streetButton.style.color = "rgb(25,25,25)";
+  streetButton.style.cursor = "pointer";
+  streetButton.style.fontFamily = "Roboto,Arial,sans-serif";
+  streetButton.style.fontSize = "16px";
+  streetButton.style.lineHeight = "35px";
+  streetButton.style.margin = "10px 10px 2px 8px";
+  streetButton.style.padding = "0 10px";
+  streetButton.style.textAlign = "center";
+  streetButton.type = "button";
+  streetButton.name = "streetChange";
+  streetButton.textContent = "切替不可";
+  // 切り替えられないときにボタンを押せなくするため
+  streetButton.disabled = true;
+  // ボタンを押されたあとの処理
+  streetButton.addEventListener("click", () => {
+    toggleStreetView();
+  });
+  return streetButton;
+}
+
+// ストリートビューに変えるボタンの処理
+function toggleStreetView() {
+  const toggle = panorama.getVisible();
+  if (toggle == false) {
+    panorama.setVisible(true);
+  } else {
+    panorama.setVisible(false);
+  }
 }
