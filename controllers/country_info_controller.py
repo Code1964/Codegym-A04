@@ -10,6 +10,7 @@ from helpers import apology
 
 def country_info():
     region_name = request.args.get('region')
+    placeID = request.args.get('placeID')
 
     if not region_name:
         flash("国/地域を選択してください")

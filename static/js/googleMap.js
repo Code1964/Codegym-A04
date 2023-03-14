@@ -563,6 +563,7 @@ function clickNoArea(latlng, geocoder) {
       if (results[0]) {
         // 取得した住所をフォームのinputにセットする
         let addressComponents = results[0].address_components;
+        let geometry = results[0].place_id;
         for (let i = 0; i < addressComponents.length; i++) {
           let types = addressComponents[i].types;
           // 国単位で調べたい場合
@@ -582,6 +583,8 @@ function clickNoArea(latlng, geocoder) {
             break;
           }
         }
+        // country_infoに送る用のPlaceIDをセットする
+        document.querySelector('input[name="placeID"]').value = geometry;
         // 取得した住所をformのinputにセットする
         document.querySelector('input[name="region"]').value = clickAddress;
       }
