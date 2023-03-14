@@ -174,7 +174,6 @@ function NeighborhoodDiscovery(configuration) {
       geocodeLatLng(geocoder, widget.map);
     });
     // 位置情報を取得できた場合とできなかった場合の処理
-    // geocodeLatLngよりあとでないと位置情報を取得できない
     // TODO: 以下、重複している部分があるのでfunction化する
     if (navigator.geolocation){
       navigator.geolocation.getCurrentPosition(position => {
@@ -210,6 +209,8 @@ function NeighborhoodDiscovery(configuration) {
       let clickLatlng = e.latLng;
       widget.map.panTo(clickLatlng);
       clickNoArea(clickLatlng, geocoder);
+      // ピンが立っている場所以外をクリックしたら、場所情報を失うようにした(文字が消えないと、ずっと同じPlaceIDを持ってると勘違いされるため)
+      document.querySelector('input[name="placeName"]').value = "";
       // ユーザーがベースマップから POI ピンをクリックしたかどうかを確認する
       if (e.placeId) {
         e.stop();
@@ -431,8 +432,11 @@ function NeighborhoodDiscovery(configuration) {
         if (panToMarker) {
           widget.map.panTo(place.coords);
         }
+        // 検索機能やすでにピン立てしている場所をクリックした際にplaceIDを変える
+        document.querySelector('input[name="placeID"]').value = placeId;
         // 住所がある場所の名前をセットする処理
-        document.querySelector('input[name="placeName"]').value = place.name;        showDetailsPanel(place);
+        document.querySelector('input[name="placeName"]').value = place.name;
+        showDetailsPanel(place);
       };
 
       widget.fetchPlaceDetails(placeId, [
@@ -602,7 +606,7 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
   'お使いのブラウザは位置情報をサポートしていません。');
 }
 
-// ボタンがクリックされたらserchTypeと文字を変更する
+// ボタンがクリックされたらsearchTypeと文字を変更する
 function changeSearchType(type) {
   searchType = type;
   if (type === 'country') {
