@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Flashcard
+{% endblock %}
+
+{% block main %}
+<main>
+    {%  if not flashcard %}
+    <div>
+        <p>単語帳には何も登録されていません</p>
+    </div>
+
+    {% else %}
+    {% for card in flashcards %}
+    <div>
+        {{region_name}}
+        {{title}}
+    </div>
+    <div>{{detail}}</div>
+
+    {% endfor %}
+    {% endif %}
+</main>
+{% endblock %}
