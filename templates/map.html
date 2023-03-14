@@ -20,6 +20,11 @@
             {"placeId": "ChIJOyg_UAfzGGARc6YWLR98LOE"},
             {"placeId": "ChIJ3XYIepA5AWAR-uzxmllSqgg"},
             {"placeId": "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI"},
+            {"placeId": "ChIJMaLcFIJZGGARKMQf8vX-Qws"},
+            // ここにfor文でPlaceIDを挿入する
+            // {% for nation in nations %}
+            //   {"placeId": "{{ placeID }}"},
+            // {% endfor %}
           ],
           "mapRadius": 9999999,
           // 初期の位置設定
@@ -129,6 +134,7 @@
         <form action="/country_info" method="get">
           <div class="mt-3">
               <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text">
+              <input class="form-control mx-auto w-auto mb-3" name="placeID" placeholder="入力" type="text" hidden>
           </div>
           <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
         </form>
@@ -149,7 +155,7 @@
   <div class="places-panel panel no-scroll">
     <header class="navbar">
       <div class="search-input">
-        <input class="place-search-input" placeholder="Search nearby places">
+        <input class="place-search-input" placeholder="場所から検索">
         <button class="place-search-button">
           <img src="https://fonts.gstatic.com/s/i/googlematerialicons/search/v11/24px.svg" alt="search"/>
         </button>

@@ -10,9 +10,14 @@ from helpers import apology
 
 def country_info():
     region_name = request.args.get('region')
+    placeID = request.args.get('placeID')
 
     if not region_name:
         flash("国/地域を選択してください")
+        return redirect(url_for('map'))
+
+    if region_name == "undefined":
+        flash("国/地域が選択できていません")
         return redirect(url_for('map'))
 
     wiki = wikipediaapi.Wikipedia("ja")
