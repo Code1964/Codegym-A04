@@ -6,9 +6,17 @@
 
 {% block main %}
 <!-- TODO: 左側にページ内リンクメニュー, できればスクロールアニメーションにする -->
-<main class='justify-center mx-64 my-9'>
+<!-- <main class='justify-center mx-64 my-9'> -->
+<!-- <main class='md:flex justify-center my-9'> -->
+<!-- <main class='justify-center md:shrink-0n my-9'> -->
+<main class='justify-center md:shrink-0 my-9 mx-64'>
 
     <p class="text-6xl">{{ region_name }}</p>
+
+    <form action="/country_info" method="post" style="display: inline-block;">
+        <input name="region_name" type="hidden" value="{{ region_name}}">
+        <button class="btn btn-success float2" type="submit">お気に入り</button>
+    </form>
 
     {% if region_image %}
     <img class="inline" src="{{ region_image }}" alt="images" width="30%" style="display: block; margin: auto;">

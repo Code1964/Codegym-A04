@@ -2,6 +2,8 @@ import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import pandas as pd
 
+from helpers import apology
+
 def map():
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
     # index.htmlからmap.htmlに送るための処理
@@ -13,6 +15,12 @@ def map():
         return render_template("map.html", google_maps_api_key=google_maps_api_key)
 
     df = pd.read_csv("asti-datr0411wc/r0411world_utf8.csv", sep='\t') # data frameを読み込む
+
+    # 例外処理
+    nations = df['name_jps'].values
+    if not nation_name in nations:
+        return apology("bad argument", 400)
+
     # 緯度経度を入れる
     latlng_str = []
     # 緯度を取得

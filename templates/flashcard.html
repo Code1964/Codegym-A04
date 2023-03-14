@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block head %}
+    <!-- cssファイル読み込み -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flashcard.scss') }}">
+{% endblock %}
+
 {% block title %}
     Flashcard
 {% endblock %}
@@ -21,5 +26,6 @@
 
     {% endfor %}
     {% endif %}
+
 </main>
 {% endblock %}

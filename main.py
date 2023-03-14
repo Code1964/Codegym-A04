@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
 from helpers import apology, login_required
-from controllers import index_controller, map_controller, country_info_controller, login_controller, logout_controller, register_controller, change_password_controller
+from controllers import index_controller, map_controller, country_info_controller, login_controller, logout_controller, register_controller, change_password_controller, flashcard_controller
 
 # Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
 app = Flask(__name__)
@@ -73,10 +73,10 @@ def change_password():
 def mypage():
     return mypage_controller.mypage()
 
-# @app.route("/flashcard", methods=["GET", "POST"])
-# # @login_required
-# def flashcard():
-#     return flashcard_controller.flashcard()
+@app.route("/flashcard", methods=["GET", "POST"])
+@login_required
+def flashcard():
+    return flashcard_controller.flashcard()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
