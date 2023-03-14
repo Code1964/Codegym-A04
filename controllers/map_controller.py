@@ -32,5 +32,9 @@ def map():
     # 使える形式に修正
     locations = "{}, {}".format(latlng_str[0]['lat'], latlng_str[0]['lng'])
 
+    # 国名を取得
+    nation_name = df[df.name_jps == nation_name]["name_jps"].values[0]
+    nation_name = nation_name.split("（")[0]
+
     #ここからjavascriptに変数送るのってどうやるの？
-    return render_template("map.html", google_maps_api_key=google_maps_api_key, locations=locations)
+    return render_template("map.html", google_maps_api_key=google_maps_api_key, locations=locations, nation_name=nation_name)
