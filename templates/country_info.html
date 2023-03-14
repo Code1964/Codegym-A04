@@ -6,16 +6,21 @@
 
 {% block main %}
 <!-- TODO: 左側にページ内リンクメニュー, できればスクロールアニメーションにする -->
-<main class='justify-center py-5 w-auto text-center mx-64'>
+<main class='justify-center mx-64 my-9'>
+
+    <p class="text-6xl">{{ region_name }}</p>
 
     {% if region_image %}
-    <img src="{{ region_image }}" alt="images" width="30%">
+    <img class="inline" src="{{ region_image }}" alt="images" width="30%" style="display: block; margin: auto;">
     {% endif %}
 
-    <h1>要約</h1>
+    {% if wiki_summary %}
+    <h1 class="text-3xl text-center my-6">要約</h1>
     <p>{{ wiki_summary }}</p>
+    {% endif %}
 
-    <h1>歴史</h1>
+    {% if histories %}
+    <h1 class="text-3xl text-center my-6">歴史</h1>
     <!-- https://flowbite.com/docs/components/accordion/ -->
     <div id="accordion-collapse" data-accordion="collapse">
         {% for history in histories %}
@@ -40,8 +45,10 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
-    <h1>地理</h1>
+    {% if geographies %}
+    <h1 class="text-3xl text-center my-6">地理</h1>
     <!-- https://flowbite.com/docs/components/accordion/ -->
     <!-- loop.indexで指定したidが上の歴史と被らないように10桁のものにする -->
     <div id="accordion-collapse" data-accordion="collapse">
@@ -67,6 +74,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
 </main>
 {% endblock %}

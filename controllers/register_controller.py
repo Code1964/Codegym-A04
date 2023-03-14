@@ -48,7 +48,7 @@ def register():
         except:
             return apology("Failed to register to the database.", 500)
 
-        flash("ユーザー登録完了")
+        flash('You were successfully register')
         return redirect("/")
 
     # getメソッドのとき

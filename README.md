@@ -62,46 +62,27 @@ $ git clone https://github.com/Code1964/World-Voyage.git
 ## docker使わないFlaskの実行方法
 
 ```
-cd project
 pip install -r requirements.txt
-flask run
+python main.py
 ```
 
 ## Setting up a Docker environment
 
 ```
-$ docker compose up -d --build
-$ docker compose exec python3 bash
-```
-
-aliasで上記コマンドを登録する
-
-```
-alias dce='docker compose exec python3 bash'
+$ docker build -t world_voyage .
+$ docker run -v $(pwd):/app -p 8080:8080 -it world_voyage bash
 ```
 
 ## Launching a web application
-Go to the same directory as app.py file
 
 ```
-/ cd project
-/ flask run --host=0.0.0.0
-```
-
-aliasで上記コマンドを登録する
-
-```
-alias fr='flask run --host=0.0.0.0'
+/ python main.py
 ```
 
 ## 終了方法
 
 ```
 exit
-docker ps     # 現状確認して
-docker compose down
-docker image ls # イメージを確認
-docker image rm <image ID>
 ```
 
 ## TailwindCSSを更新するときに使用
@@ -109,3 +90,5 @@ docker image rm <image ID>
 ```
 npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch
 ```
+
+docker環境の人は上記コマンドが`alias`で`tw`コマンドになっているので`tw`を使用

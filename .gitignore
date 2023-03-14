@@ -1,7 +1,6 @@
 .*
 !.gitignore
-project/.*/
-project/__pycache__/
-project/controllers/__pycache__/
 !.github/
-project/flask_session
+__pycache__
+controllers/__pycache__/
+flask_session

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 import pandas as pd
 
 def map():
@@ -7,7 +7,9 @@ def map():
     # index.htmlからmap.htmlに送るための処理
     nation_name = request.args.get('nation')
 
-    if not nation_name:
+    if nation_name == '国名を選択してください' or not nation_name:
+        # flash("国を選択してください")
+        # return redirect(url_for('index'))
         return render_template("map.html", google_maps_api_key=google_maps_api_key)
 
     df = pd.read_csv("asti-datr0411wc/r0411world_utf8.csv", sep='\t') # data frameを読み込む
