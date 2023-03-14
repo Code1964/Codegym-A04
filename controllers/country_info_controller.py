@@ -81,4 +81,5 @@ def country_info():
     histories = dict(zip(history_title, history_detail))
     geographies = dict(zip(geography_title, geography_detail))
 
-    return render_template("country_info.html", region_name=region_name, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
+    # return render_template("country_info.html", region_name=region_name, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
+    return render_template("country_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
