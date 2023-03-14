@@ -16,6 +16,10 @@ def country_info():
         flash("国/地域を選択してください")
         return redirect(url_for('map'))
 
+    if region_name == "undefined":
+        flash("国/地域が選択できていません")
+        return redirect(url_for('map'))
+
     wiki = wikipediaapi.Wikipedia("ja")
     page = wiki.page(region_name)
     if not page.exists():
