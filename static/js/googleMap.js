@@ -144,6 +144,7 @@ function NeighborhoodDiscovery(configuration) {
     mapOptions.scaleControlOptions = {position: google.maps.ControlPosition.LEFT};
     // 地図のタイプ(航空写真+ラベル付き)
     mapOptions.mapTypeId = google.maps.MapTypeId.HYBRID;
+    mapOptions.mapTypeControlOptions = {position: google.maps.ControlPosition.RIGHT_TOP};
     // gestureHandlingを"greedy"に変更
     mapOptions.gestureHandling = "greedy";
     widget.map = new google.maps.Map(widgetEl.querySelector('.map'), mapOptions);

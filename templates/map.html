@@ -133,7 +133,7 @@
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeSearchType('city')">市単位</button>
         <form action="/country_info" method="get">
           <div class="mt-3">
-              <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text">
+              <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text" value="{{ nation_name }}">
               <input class="form-control mx-auto w-auto mb-3" name="placeID" placeholder="入力" type="text" hidden>
           </div>
           <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
