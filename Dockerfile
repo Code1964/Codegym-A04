@@ -12,7 +12,7 @@ COPY . .
 RUN apt-get update \
     && apt-get -y install locales sqlite3 nodejs npm \
     && localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 \
-    && echo 'alias tw="npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch"' >> ~/.bashrc
+    && echo 'alias tw="npx tailwindcss -i ./static/css/input.css -o ./static/dist/css/output.css --watch"' >> ~/.bashrc \
     && echo 'alias pm="python main.py"' >> ~/.bashrc
 
 # Set environment variables
