@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from helpers import apology, login_required
 
-from controllers import index_controller, map_controller, country_info_controller, login_controller, logout_controller, register_controller, change_password_controller, usage_controller, flashcard_controller
+from controllers import index_controller, map_controller, region_info_controller, login_controller, logout_controller, register_controller, change_password_controller, usage_controller, flashcard_controller
 
 # Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
 app = Flask(__name__)
@@ -48,9 +48,9 @@ def index():
 def map():
     return map_controller.map()
 
-@app.route("/country_info")
-def country_info():
-    return country_info_controller.country_info()
+@app.route("/region_info")
+def region_info():
+    return region_info_controller.region_info()
 
 @app.route("/usage")
 def usage():

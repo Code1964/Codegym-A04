@@ -10,5 +10,3 @@ def flashcard():
     # return render_template("flashcard.html", flashcards=flashcards)
 
     return render_template("flashcard.html")
-
-# flashcardは、country_infoから登録できるのか、どこから登録？

@@ -588,7 +588,7 @@ function clickNoArea(latlng, geocoder) {
             break;
           }
         }
-        // country_infoに送る用のPlaceIDをセットする
+        // region_infoに送る用のPlaceIDをセットする
         document.querySelector('input[name="placeID"]').value = geometry;
         // 取得した住所をformのinputにセットする
         document.querySelector('input[name="region"]').value = clickAddress;
