@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    使い方
+{% endblock %}
+
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>サイトの使用方法</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+	<header class="bg-gray-800 text-white py-6">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<h1 class="text-3xl font-bold leading-tight">サイトの使用方法</h1>
+		</div>
+	</header>
+    {% block main %}
+	<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">アカウント作成</h2>
+			<p>サイトを利用するには、まずアカウントを作成する必要があります。以下の手順に従って、アカウントを作成してください。</p>
+			<ol class="list-decimal list-inside mt-4">
+				<li>トップページから「Register」をクリックします。</li>
+				<li>必要事項を入力し、「Register」ボタンをクリックします。</li>
+			</ol>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">ログイン</h2>
+			<p>アカウントを作成したら、以下の手順に従ってログインしてください。</p>
+			<ol class="list-decimal list-inside mt-4">
+				<li>トップページから「Log in」をクリックします。</li>
+				<li>登録したメールアドレスとパスワードを入力します。</li>
+				<li>「Login」ボタンをクリックします。</li>
+			</ol>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">パスワード変更</h2>
+			<p>パスワードを変更したい場合は、ログインをしてください。</p>
+			<ol class="list-decimal list-inside mt-4">
+				<li>ログインした状態で、トップページから「Change Password」をクリックします。</li>
+				<li>古いパスワードと新しいパスワードを入力します。</li>
+				<li>「Change Password」ボタンをクリックします。</li>
+			</ol>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">自分の好きな国を選択して調べたい場合</h2>
+			<p>トップページで国名を選択し、冒険に出るを押してください。</p>
+			<ol class="list-decimal list-inside mt-4">
+				<li>地図情報をクリックすることで、その国の名前が検索欄に表示されます。</li>
+				<li>例えば、日本をクリックすると、「日本」という位置情報を取得し、「調べる」ボタンを押すとWikipediaAPIからその国の情報を取得して国の歴史や地理が表示されます。</li>
+				<li>国だけでなく、県や市区町村でも同様です。</li>
+			</ol>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">自分の現在地から始めたい場合</h2>
+			<p>トップページ上部で「Map」をクリックしてください。</p>
+			<ol class="list-decimal list-inside mt-4">
+				<li>自分の現在地にピンが表示されます。</li>
+				<li>地図をクリックすると、クリックされた場所が検索欄に入力され、「調べる」を押すとその場所の情報が閲覧できます。</li>
+				<li>国単位、県単位、市単位のボタンをクリックすることで、場所を絞り込めます。</li>
+			</ol>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">お気に入り機能(ログイン状態限定)</h2>
+			<p>登録した場所は左側に一覧表示され、そこをクリックすると「場所で検索中」の検索欄に場所名が入力されます。同じく「調べる」を押すことでその場所の情報を閲覧できます。</p>
+		</section>
+		<section class="border border-gray-200 bg-white p-6 rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">ログアウト</h2>
+			<p>トップページでログアウトをクリックしてください。</p>
+		</section>
+	</main>
+    {% endblock %}
+</body>
+</html>
