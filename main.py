@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from helpers import apology, login_required
 
-from controllers import index_controller, map_controller, region_info_controller, login_controller, logout_controller, register_controller, change_password_controller, usage_controller, flashcard_controller
+from controllers import index_controller, map_controller, region_info_controller, login_controller, logout_controller, register_controller, change_password_controller, usage_controller, flashcard_controller, favorite_controller
 
 # Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
 app = Flask(__name__)
@@ -82,6 +82,11 @@ def mypage():
 @login_required
 def flashcard():
     return flashcard_controller.flashcard()
+
+@app.route("/favorite")
+@login_required
+def favorite():
+    return favorite_controller.favorite()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

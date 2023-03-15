@@ -9,16 +9,10 @@ from helpers import apology
 # 地域名をgetで取得
 
 def region_info():
-    if request.method == "POST":
-        region_name = request.form.get("region_name")
-        placeID = request.args.get('placeID') # ない場合もある
-        print(region_name)
-        print(placeID)
-    else: # getメソッドの時
-        region_name = request.args.get('region')
-        if not region_name: # indexから直接国が渡される場合
-            region_name = request.args.get('nation')
-        placeID = request.args.get('placeID') # ない場合もある
+    region_name = request.args.get('region')
+    if not region_name: # indexから直接国が渡される場合
+        region_name = request.args.get('nation')
+    placeID = request.args.get('placeID') # ない場合もある
 
     if not region_name:
         flash("国/地域を選択してください")
