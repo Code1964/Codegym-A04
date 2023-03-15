@@ -40,13 +40,17 @@
       {% raw %}
       <script id="nd-place-results-tmpl" type="text/x-handlebars-template">
         {{#each places}}
-          <li class="place-result">
-            <div class="text">
-              <button class="name">{{name}}</button>
-              <div class="info">{{type}}</div>
-            </div>
-            <button class="photo" style="background-image:url({{photos.0.urlSmall}})" aria-label="show photo in viewer"></button>
-          </li>
+        <li class="place-result">
+          <div class="text">
+            <button class="name">{{name}}</button>
+            <div class="info">{{type}}</div>
+          </div>
+          {{#if photos}}
+              <button class="photo" style="background-image:url({{photos.0.urlSmall}})" aria-label="show photo in viewer"></button>
+            {{else}}
+              <button class="photo" style="background-image:url('/static/images/ImageNotFound.png');" aria-label="show photo in viewer"></button>
+          {{/if}}
+        </li>
         {{/each}}
       </script>
       <script id="nd-place-details-tmpl" type="text/x-handlebars-template">
