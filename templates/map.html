@@ -28,7 +28,7 @@
           ],
           "mapRadius": 9999999,
           // 初期の位置設定
-          "mapOptions": {"center":{"lat":35.6761919,"lng":139.6503106},"streetViewControl":true,"zoom":5,"maxZoom":20,"mapId":""/** スタイルを変えられる処理 */},
+          "mapOptions": {"center":{"lat":35.6761919,"lng":139.6503106},"zoom":5,"maxZoom":25,"mapId":""/** スタイルを変えられる処理 */},
           "mapsApiKey": "{{ google_maps_api_key }}",
         };
 
@@ -121,36 +121,6 @@
 {% endblock %}
 
 {% block main %}
-<main class="container-fluid py-5 text-center">
-  <div class="flex flex-col md:flex-row">
-    <div class="md:w-1/2">
-      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">現在、【<span id="searchTypeText" class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white">国</span>】単位で検索中です</h1>
-      <!-- このコードはないものとしてください -->
-      <input id="latlng" type="text" value="{{ locations }}" hidden />
-      <div>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeSearchType('country')">国単位</button>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeSearchType('prefecture')">県単位</button>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeSearchType('city')">市単位</button>
-        <form action="/region_info" method="get">
-          <div class="mt-3">
-              <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text" value="{{ nation_name }}">
-              <input class="form-control mx-auto w-auto mb-3" name="placeID" placeholder="入力" type="text" hidden>
-          </div>
-          <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
-        </form>
-      </div>
-    </div>
-    <div class="md:w-1/2">
-      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">場所で検索中です</h1>
-      <form action="/region_info" method="get">
-        <div>
-            <input class="form-control mx-auto w-auto mb-3" name="placeName" placeholder="入力" type="text">
-        </div>
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
-      </form>
-    </div>
-  </div>
-</main>
 <div class="neighborhood-discovery">
   <div class="places-panel panel no-scroll">
     <header class="navbar">
@@ -187,5 +157,34 @@
     <path d="M13 0C5.817 0 0 5.93 0 13.267c0 7.862 5.59 10.81 9.555 17.624C12.09 35.248 11.342 38 13 38c1.723 0 .975-2.817 3.445-7.043C20.085 24.503 26 21.162 26 13.267 26 5.93 20.183 0 13 0Z"/>
   </svg>
 </div>
-
+<main class="container-fluid py-5 text-center">
+  <div class="flex flex-col md:flex-row">
+    <div class="md:w-1/2">
+      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">現在、【<span id="searchTypeText" class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white">国</span>】単位で検索中です</h1>
+      <!-- このコードはないものとしてください -->
+      <input id="latlng" type="text" value="{{ locations }}" hidden />
+      <div>
+        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="countryBtn" onclick="changeSearchType('country')">国単位</button>
+        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="prefectureBtn" onclick="changeSearchType('prefecture')">県単位</button>
+        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" id="cityBtn" onclick="changeSearchType('city')">市単位</button>
+        <form action="/region_info" method="get">
+          <div class="mt-3">
+              <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text" value="{{ nation_name }}">
+              <input class="form-control mx-auto w-auto mb-3" name="placeID" placeholder="入力" type="text" hidden>
+          </div>
+          <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+        </form>
+      </div>
+    </div>
+    <div class="md:w-1/2">
+      <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9">場所で検索中です</h1>
+      <form action="/region_info" method="get">
+        <div>
+            <input class="form-control mx-auto w-auto mb-3" name="placeName" placeholder="入力" type="text">
+        </div>
+        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
+      </form>
+    </div>
+  </div>
+</main>
 {% endblock %}

@@ -137,11 +137,11 @@ function NeighborhoodDiscovery(configuration) {
     // フルスクリーンになるボタンを右下に配置する
     mapOptions.fullscreenControlOptions = {position: google.maps.ControlPosition.BOTTOM_LEFT};
     mapOptions.rotateControl = true;
-    mapOptions.rotateControlOptions = {position: google.maps.ControlPosition.LEFT_BOTTOM};
+    mapOptions.rotateControlOptions = {position: google.maps.ControlPosition.RIGHT_BOTTOM};
     // ストリートビューが使えるボタンを左に配置する
     mapOptions.streetViewControlOptions = {position: google.maps.ControlPosition.LEFT_BOTTOM};
-    // ズームボタンを右下に配置する
-    mapOptions.zoomControlOptions = {position: google.maps.ControlPosition.RIGHT_BOTTOM};
+    // ズームボタンを非表示する
+    mapOptions.zoomControl = false;
     mapOptions.scaleControl = true;
     mapOptions.scaleControlOptions = {position: google.maps.ControlPosition.LEFT};
     // 地図のタイプ(航空写真+ラベル付き)
