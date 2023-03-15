@@ -11,12 +11,14 @@ from helpers import apology
 def region_info():
     if request.method == "POST":
         region_name = request.form.get("region_name")
-        placeID = request.args.get('placeID')
+        placeID = request.args.get('placeID') # ない場合もある
         print(region_name)
         print(placeID)
     else: # getメソッドの時
         region_name = request.args.get('region')
-        placeID = request.args.get('placeID')
+        if not region_name: # indexから直接国が渡される場合
+            region_name = request.args.get('nation')
+        placeID = request.args.get('placeID') # ない場合もある
 
     if not region_name:
         flash("国/地域を選択してください")
@@ -25,6 +27,9 @@ def region_info():
     if region_name == "undefined":
         flash("国/地域が選択できていません")
         return redirect(url_for('map'))
+
+    # アメリカ（米国） -> アメリカ
+    region_name = region_name.split("（")[0]
 
     wiki = wikipediaapi.Wikipedia("ja")
     page = wiki.page(region_name)
