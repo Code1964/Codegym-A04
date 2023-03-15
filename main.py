@@ -48,7 +48,7 @@ def index():
 def map():
     return map_controller.map()
 
-@app.route("/region_info")
+@app.route("/region_info", methods=["GET", "POST"])
 def region_info():
     return region_info_controller.region_info()
 
