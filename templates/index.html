@@ -59,7 +59,7 @@
                             </div>
                         </div>
 
-                        <form class="w-full max-w-lg" method="get" action="{{ url_for('map') }}">
+                        <form class="w-full max-w-lg" method="GET" action="?">
                             <div>
 
                                 <!-- <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どのような用途で使いますか？</h1>
@@ -77,9 +77,12 @@
                                 </select>
 
                             </div>
-                            <div class="py-3 px-4 pr-9 flex justify-center">
-                                <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                            <div class="py-3 px-4 pr-9 flex justify-center space-x-6">
+                                <button formaction="/map" class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
                                     冒険に出る
+                                </button>
+                                <button formaction="/region_info" class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
+                                    情報を見る
                                 </button>
                             </div>
                         </form>
