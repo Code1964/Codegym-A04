@@ -88,12 +88,12 @@ html, body {
   @media only screen and (max-width: 768px) {
     .neighborhood-discovery .panel {
       right: 0;
-      top: 55%;
+      top: 50%;
       width: unset;
     }
 
     .neighborhood-discovery .map {
-      bottom: 45%;
+      bottom: 50%;
       left: 0;
     }
   }

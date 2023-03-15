@@ -21,6 +21,7 @@
             {"placeId": "ChIJ3XYIepA5AWAR-uzxmllSqgg"},
             {"placeId": "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI"},
             {"placeId": "ChIJMaLcFIJZGGARKMQf8vX-Qws"},
+            {"placeId": "ChIJqUFu_8qdWFERkbMg_pPSNSQ"},
             // ここにfor文でPlaceIDを挿入する
             // {% for nation in nations %}
             //   {"placeId": "{{ placeID }}"},
@@ -39,13 +40,17 @@
       {% raw %}
       <script id="nd-place-results-tmpl" type="text/x-handlebars-template">
         {{#each places}}
-          <li class="place-result">
-            <div class="text">
-              <button class="name">{{name}}</button>
-              <div class="info">{{type}}</div>
-            </div>
-            <button class="photo" style="background-image:url({{photos.0.urlSmall}})" aria-label="show photo in viewer"></button>
-          </li>
+        <li class="place-result">
+          <div class="text">
+            <button class="name">{{name}}</button>
+            <div class="info">{{type}}</div>
+          </div>
+          {{#if photos}}
+              <button class="photo" style="background-image:url({{photos.0.urlSmall}})" aria-label="show photo in viewer"></button>
+            {{else}}
+              <button class="photo" style="background-image:url('/static/images/ImageNotFound.png');" aria-label="show photo in viewer"></button>
+          {{/if}}
+        </li>
         {{/each}}
       </script>
       <script id="nd-place-details-tmpl" type="text/x-handlebars-template">
@@ -170,7 +175,8 @@
         <form action="/region_info" method="get">
           <div class="mt-3">
               <input class="form-control mx-auto w-auto mb-3" name="region" placeholder="入力" type="text" value="{{ nation_name }}">
-              <input class="form-control mx-auto w-auto mb-3" name="placeID" placeholder="入力" type="text" hidden>
+              <input name="placeID" type="text" hidden>
+              <input name="country" type="text" hidden>
           </div>
           <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">調べる</button>
         </form>
