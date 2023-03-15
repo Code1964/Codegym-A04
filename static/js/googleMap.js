@@ -532,7 +532,8 @@ function NeighborhoodDiscovery(configuration) {
 
     // 検索入力でオートコンプリートを設定する
     const autocomplete = new google.maps.places.Autocomplete(searchInputEl, {
-      types: ['establishment'],
+      // typesに何かしら指定すると、場所だけ選択できたりする。今回は国でも場所でも検索できるように空欄にした。
+      types: [],
       fields: [
         'place_id', 'name', 'types', 'geometry.location', 'formatted_address', 'photo', 'url', 'website', 'formatted_phone_number', 'opening_hours',
       ],
