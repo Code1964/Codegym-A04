@@ -17,6 +17,7 @@ def flashcard():
         section = request.form.get("section")
         title = request.form.get("title")
         detail = request.form.get("detail")
+        # image = request.form.get("image")
         print("====================================")
         print(user_id)
         print(region)
