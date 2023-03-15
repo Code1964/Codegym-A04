@@ -8,9 +8,15 @@ from helpers import apology
 # リダイレクト元：map.html
 # 地域名をgetで取得
 
-def country_info():
-    region_name = request.args.get('region')
-    placeID = request.args.get('placeID')
+def region_info():
+    if request.method == "POST":
+        region_name = request.form.get("region_name")
+        placeID = request.args.get('placeID')
+        print(region_name)
+        print(placeID)
+    else: # getメソッドの時
+        region_name = request.args.get('region')
+        placeID = request.args.get('placeID')
 
     if not region_name:
         flash("国/地域を選択してください")
@@ -54,7 +60,7 @@ def country_info():
         region_image = [] # どちらにしろhtmlに渡すのでダミーを作成
 
     # ==================================================
-    # 歴史
+    # 歴史・地理
     sections = page.sections
     # print(sections[1])  # section1つ目出力, 基本的に概要
 
@@ -81,5 +87,4 @@ def country_info():
     histories = dict(zip(history_title, history_detail))
     geographies = dict(zip(geography_title, geography_detail))
 
-    # return render_template("country_info.html", region_name=region_name, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
-    return render_template("country_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies)
+    return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID)

@@ -5,18 +5,20 @@
 {% endblock %}
 
 {% block main %}
-<!-- TODO: 左側にページ内リンクメニュー, できればスクロールアニメーションにする -->
-<!-- <main class='justify-center mx-64 my-9'> -->
-<!-- <main class='md:flex justify-center my-9'> -->
-<!-- <main class='justify-center md:shrink-0n my-9'> -->
+
 <main class='justify-center md:shrink-0 my-9 mx-64'>
 
-    <p class="text-6xl">{{ region_name }}</p>
+    <div class="flex-auto">
+        <p class="text-6xl">{{ region_name }}</p>
 
-    <form action="/country_info" method="post" style="display: inline-block;">
-        <input name="region_name" type="hidden" value="{{ region_name}}">
-        <button class="btn btn-success float2" type="submit">お気に入り</button>
-    </form>
+        <!-- TODO: ボタンの位置を変える -->
+        <form action="/region_info" method="post" style="display: inline-block;">
+            <input name="region_name" type="hidden" value="{{ region_name }}">
+            <input name="placeID" type="hidden" value="{{ placeID }}">
+            <button class="px-2 py-1 bg-yellow-400 text-white font-semibold rounded hover:bg-yellow-500">お気に入り</button>
+        </form>
+
+    </div>
 
     {% if region_image %}
     <img class="inline" src="{{ region_image }}" alt="images" width="30%" style="display: block; margin: auto;">
@@ -51,6 +53,15 @@
                 <p>{{ histories[history] }}</p>
             </div>
         </div>
+        <!-- flashcard -->
+        <form action="/flashcard" method="post" style="display: inline-block;">
+            <input name="region_name" type="hidden" value="{{ region_name }}">
+            <input name="section" type="hidden" value="歴史">
+            <input name="title" type="hidden" value="{{ history }}">
+            <input name="detail" type="hidden" value="{{ histories[history] }}">
+            <!-- <input name="image" type="hidden" value="{{ region_image }}"> -->
+            <button class="px-2 py-1 text-green-500 border border-green-500 font-semibold rounded hover:bg-green-100">登録</button>
+        </form>
         {% endfor %}
     </div>
     {% endif %}
@@ -80,6 +91,14 @@
                 <p>{{ geographies[geography] }}</p>
             </div>
         </div>
+        <!-- flashcard -->
+        <form action="/flashcard" method="post" style="display: inline-block;">
+            <input name="region_name" type="hidden" value="{{ region_name }}">
+            <input name="section" type="hidden" value="地理">
+            <input name="title" type="hidden" value="{{ geography }}">
+            <input name="detail" type="hidden" value="{{ geographies[geography] }}">
+            <button class="px-2 py-1 text-green-500 border border-green-500 font-semibold rounded hover:bg-green-100">登録</button>
+        </form>
         {% endfor %}
     </div>
     {% endif %}
