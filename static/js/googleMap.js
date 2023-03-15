@@ -270,23 +270,14 @@ function NeighborhoodDiscovery(configuration) {
         void widget.selectPlaceById(place.placeId);
         // グローバル変数に代入
         placeName = place.name;
-        // TODO function化
-        let placeAddress = place.address;
-        // 最初の空白の位置を取得
-        let spaceIndex = placeAddress.indexOf(" ");
-        // 最初の「、」の位置を取得
-        let commaIndex = placeAddress.indexOf("、");
-        let index = spaceIndex === -1 ? commaIndex : commaIndex === -1 ? spaceIndex : Math.min(spaceIndex, commaIndex);
-        let trimmedAddress = index === -1 ? placeAddress : placeAddress.substr(0, index);
-        // 空白以降の文字を削除した文字列
-        document.querySelector('input[name="country"]').value = trimmedAddress;
         // 取得した住所をformのinputにセットする
         document.querySelector('input[name="placeName"]').value = placeName;
         // 都道府県検索の表示欄は同期できないので削除する
         document.querySelector('input[name="region"]').value = "";
+        // 検索機能やすでにピン立てしている場所をクリックした際にplaceIDを変える
+        document.querySelector('input[name="placeID"]').value = place.placeId;
         // ストリートビューを表示する関数
         streetLocation(place.coords, widget.map);
-        // TODO ここまで
       });
     };
 
@@ -458,27 +449,24 @@ function NeighborhoodDiscovery(configuration) {
         if (panToMarker) {
           widget.map.panTo(place.coords);
         }
-        // TODO function化
         placeName = place.name;
         let placeAddress = place.address;
-        // 最初の空白の位置を取得
+        // 空白と「、」を検索し、それ以降の文字を削除した文字列
         let spaceIndex = placeAddress.indexOf(" ");
-        // 最初の「、」の位置を取得
         let commaIndex = placeAddress.indexOf("、");
         let index = spaceIndex === -1 ? commaIndex : commaIndex === -1 ? spaceIndex : Math.min(spaceIndex, commaIndex);
         let trimmedAddress = index === -1 ? placeAddress : placeAddress.substr(0, index);
-        // 空白と「、」以降の文字を削除した文字列
-        document.querySelector('input[name="country"]').value = trimmedAddress;
         // 検索機能やすでにピン立てしている場所をクリックした際にplaceIDを変える
         document.querySelector('input[name="placeID"]').value = placeId;
-        // 住所がある場所の名前をセットする処理
-        document.querySelector('input[name="placeName"]').value = place.name;
+        // 空白以降の文字を削除した文字列
+        document.querySelector('input[name="country"]').value = trimmedAddress;
+        // 取得した住所をformのinputにセットする
+        document.querySelector('input[name="placeName"]').value = placeName;
         // 都道府県検索の表示欄は同期できないので削除する
         document.querySelector('input[name="region"]').value = "";
         // サイドバーからもストリートビューを表示できるようにする関数
         streetLocation(place.coords, widget.map);
         showDetailsPanel(place);
-        // TODO ここまで
       };
 
       widget.fetchPlaceDetails(placeId, [
@@ -604,7 +592,7 @@ function geocodeLatLng(geocoder, map) {
 }
 
 // 場所をクリックすると調べるフォームに飛ぶ
-// TODO function化
+// TODO function化 function addressProcess(result, number)みたいにする
 function clickNoArea(latlng, geocoder) {
   geocoder.geocode({ 'location': latlng }, function(results) {
     let clickAddress;
