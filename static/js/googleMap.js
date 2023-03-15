@@ -269,11 +269,24 @@ function NeighborhoodDiscovery(configuration) {
         // Place を選択する処理
         void widget.selectPlaceById(place.placeId);
         // グローバル変数に代入
-        placeName = place.name
+        placeName = place.name;
+        // TODO function化
+        let placeAddress = place.address;
+        // 最初の空白の位置を取得
+        let spaceIndex = placeAddress.indexOf(" ");
+        // 最初の「、」の位置を取得
+        let commaIndex = placeAddress.indexOf("、");
+        let index = spaceIndex === -1 ? commaIndex : commaIndex === -1 ? spaceIndex : Math.min(spaceIndex, commaIndex);
+        let trimmedAddress = index === -1 ? placeAddress : placeAddress.substr(0, index);
+        // 空白以降の文字を削除した文字列
+        document.querySelector('input[name="country"]').value = trimmedAddress;
         // 取得した住所をformのinputにセットする
         document.querySelector('input[name="placeName"]').value = placeName;
+        // 都道府県検索の表示欄は同期できないので削除する
+        document.querySelector('input[name="region"]').value = "";
         // ストリートビューを表示する関数
         streetLocation(place.coords, widget.map);
+        // TODO ここまで
       });
     };
 
@@ -445,13 +458,27 @@ function NeighborhoodDiscovery(configuration) {
         if (panToMarker) {
           widget.map.panTo(place.coords);
         }
+        // TODO function化
+        placeName = place.name;
+        let placeAddress = place.address;
+        // 最初の空白の位置を取得
+        let spaceIndex = placeAddress.indexOf(" ");
+        // 最初の「、」の位置を取得
+        let commaIndex = placeAddress.indexOf("、");
+        let index = spaceIndex === -1 ? commaIndex : commaIndex === -1 ? spaceIndex : Math.min(spaceIndex, commaIndex);
+        let trimmedAddress = index === -1 ? placeAddress : placeAddress.substr(0, index);
+        // 空白と「、」以降の文字を削除した文字列
+        document.querySelector('input[name="country"]').value = trimmedAddress;
         // 検索機能やすでにピン立てしている場所をクリックした際にplaceIDを変える
         document.querySelector('input[name="placeID"]').value = placeId;
         // 住所がある場所の名前をセットする処理
         document.querySelector('input[name="placeName"]').value = place.name;
+        // 都道府県検索の表示欄は同期できないので削除する
+        document.querySelector('input[name="region"]').value = "";
         // サイドバーからもストリートビューを表示できるようにする関数
         streetLocation(place.coords, widget.map);
         showDetailsPanel(place);
+        // TODO ここまで
       };
 
       widget.fetchPlaceDetails(placeId, [
@@ -577,6 +604,7 @@ function geocodeLatLng(geocoder, map) {
 }
 
 // 場所をクリックすると調べるフォームに飛ぶ
+// TODO function化
 function clickNoArea(latlng, geocoder) {
   geocoder.geocode({ 'location': latlng }, function(results) {
     let clickAddress;
@@ -584,32 +612,82 @@ function clickNoArea(latlng, geocoder) {
         // 取得した住所をフォームのinputにセットする
         let addressComponents = results[0].address_components;
         let geometry = results[0].place_id;
+        let countryAddress;
         for (let i = 0; i < addressComponents.length; i++) {
           let types = addressComponents[i].types;
           // 国単位で調べたい場合
           if (searchType === 'country' && types.includes('country')) {
             // 取得した住所から国の部分だけ抽出する
             clickAddress = addressComponents[i].long_name;
-            break;
           } // 県単位で調べたい場合
           else if (searchType === 'prefecture' && types.includes('administrative_area_level_1')) {
             // 取得した住所から県の部分だけ抽出する
             clickAddress = addressComponents[i].long_name;
-            break;
           } // 市区町村単位で調べたい場合
           else if (searchType === 'city' && (types.includes('locality') || types.includes('administrative_area_level_2'))) {
             // 取得した住所から市区町村の部分だけ抽出する
             clickAddress = addressComponents[i].long_name;
+          }
+          // もしtypesがcountryだった場合、その国の名前を保存する
+          if (types.includes('country')) {
+            countryAddress = addressComponents[i].long_name;
+            // 全ての処理が終わったのでfor文を終了する
             break;
+          }
+        }
+        // resultsが0しかなかった(海など)場合のエラーを解決
+        if (results[1]) {
+          // もしundefinedだった場合の処理(アフリカ大陸あたりだとこちらでしか通らない)
+          if (countryAddress === undefined) {
+            // 取得した住所をフォームのinputにセットする
+            addressComponents = results[1].address_components;
+            geometry = results[1].place_id;
+            for (let i = 0; i < addressComponents.length; i++) {
+              let types = addressComponents[i].types;
+              // 国単位で調べたい場合
+              if (searchType === 'country' && types.includes('country')) {
+                // 取得した住所から国の部分だけ抽出する
+                clickAddress = addressComponents[i].long_name;
+              } // 県単位で調べたい場合
+              else if (searchType === 'prefecture' && types.includes('administrative_area_level_1')) {
+                // 取得した住所から県の部分だけ抽出する
+                clickAddress = addressComponents[i].long_name;
+              } // 市区町村単位で調べたい場合
+              else if (searchType === 'city' && (types.includes('locality') || types.includes('administrative_area_level_2'))) {
+                // 取得した住所から市区町村の部分だけ抽出する
+                clickAddress = addressComponents[i].long_name;
+              }
+              // もしtypesがcountryだった場合、その国の名前を保存する
+              if (types.includes('country')) {
+                countryAddress = addressComponents[i].long_name;
+                // 全ての処理が終わったのでfor文を終了する
+                break;
+              }
+            }
           }
         }
         // region_infoに送る用のPlaceIDをセットする
         document.querySelector('input[name="placeID"]').value = geometry;
         // 取得した住所をformのinputにセットする
-        document.querySelector('input[name="region"]').value = clickAddress;
+        // 上記らの処理でもundefinedだった場合の処理
+        if (clickAddress === undefined) {
+          // 取得した国をformのinputにセットする
+          document.querySelector('input[name="region"]').value = "見つかりません";
+        } else {
+          // 取得した国をformのinputにセットする
+          document.querySelector('input[name="region"]').value = clickAddress;
+        }
+        if (countryAddress === undefined) {
+          // 取得した国をformのinputにセットする
+          document.querySelector('input[name="country"]').value = "見つかりません";
+        } else {
+          // 取得した国をformのinputにセットする
+          document.querySelector('input[name="country"]').value = countryAddress;
+        }
       }
   })
 }
+// TODO ここまで
 
 // 位置情報の取得でエラーが出た場合
 function handleLocationError(browserHasGeolocation, infoWindow) {
@@ -630,7 +708,7 @@ function changeSearchType(type) {
   } else if (type === 'prefecture') {
     message = "県";
   } else if (type === 'city') {
-    message = "市区町村";
+    message = "市";
   }
   document.getElementById('searchTypeText').innerHTML = message;
 }
