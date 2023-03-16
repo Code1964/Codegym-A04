@@ -8,10 +8,10 @@
 
 <main class='justify-center md:shrink-0 my-9 mx-64'>
 
-    <div class="flex-auto">
+    <!-- <div class="flex-auto"> -->
+    <div class="flex-auto flex justify-between items-center">
         <p class="text-6xl">{{ region_name }}</p>
 
-        <!-- TODO: ボタンの位置を変える -->
         {% if placeID %}
         <form action="/favorite" method="GET" style="display: inline-block;">
             <input name="region_name" type="hidden" value="{{ region_name }}">
