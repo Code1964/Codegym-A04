@@ -12,11 +12,13 @@
         <p class="text-6xl">{{ region_name }}</p>
 
         <!-- TODO: ボタンの位置を変える -->
+        {% if placeID %}
         <form action="/favorite" method="GET" style="display: inline-block;">
             <input name="region_name" type="hidden" value="{{ region_name }}">
             <input name="placeID" type="hidden" value="{{ placeID }}">
             <button class="px-2 py-1 bg-yellow-400 text-white font-semibold rounded hover:bg-yellow-500">お気に入り</button>
         </form>
+        {% endif %}
 
     </div>
 
