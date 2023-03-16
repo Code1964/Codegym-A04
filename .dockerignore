@@ -1,0 +1,11 @@
+.git
+.gitignore
+.github
+README.md
+Dockerfile
+__pycache__
+controllers/__pycache__
+.sandbox
+.env
+node_modules
+flask_session

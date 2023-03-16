@@ -7,10 +7,8 @@
 {% block main %}
 
 <main class='justify-center md:shrink-0 my-9 mx-64'>
-
     <div class="flex-auto flex justify-between items-center">
         <p class="text-6xl">{{ region_name }}</p>
-
         {% if placeID %}
         <form action="/favorite" method="GET" style="display: inline-block;">
             <input name="region_name" type="hidden" value="{{ region_name }}">
@@ -18,7 +16,6 @@
             <button class="px-2 py-1 bg-yellow-400 text-white font-semibold rounded hover:bg-yellow-500">お気に入り</button>
         </form>
         {% endif %}
-
     </div>
 
     {% if region_image %}
@@ -32,9 +29,7 @@
 
     {% if histories %}
     <h1 class="text-3xl text-center my-6">歴史</h1>
-
-
-    <!-- https://flowbite.com/docs/components/accordion/ -->
+    <!-- アコーディオン -->
     <div id="accordion-collapse" data-accordion="collapse">
         {% for history in histories %}
         <div class="relative">
@@ -62,19 +57,17 @@
                     <input name="section" type="hidden" value="歴史">
                     <input name="title" type="hidden" value="{{ history }}">
                     <input name="detail" type="hidden" value="{{ histories[history] }}">
-                    <!-- <input name="image" type="hidden" value="{{ region_image }}"> -->
                     <button class="px-2 py-1 text-green-500 border border-green-500 font-semibold rounded hover:bg-green-100">登録</button>
                 </form>
             </div>
         </div>
         {% endfor %}
     </div>
-
     {% endif %}
 
     {% if geographies %}
     <h1 class="text-3xl text-center my-6">地理</h1>
-    <!-- https://flowbite.com/docs/components/accordion/ -->
+    <!-- アコーディオン -->
     <!-- loop.indexで指定したidが上の歴史と被らないように3始まりの10桁のものにする -->
     <div id="accordion-collapse" data-accordion="collapse">
         {% for geography in geographies %}
@@ -102,7 +95,6 @@
                         <input name="section" type="hidden" value="地理">
                         <input name="title" type="hidden" value="{{ geography }}">
                         <input name="detail" type="hidden" value="{{ geographies[geography] }}">
-                        <!-- <input name="image" type="hidden" value="{{ region_image }}"> -->
                         <button class="px-2 py-1 text-green-500 border border-green-500 font-semibold rounded hover:bg-green-100">登録</button>
                     </form>
                 </div>
@@ -111,6 +103,5 @@
         {% endfor %}
     </div>
     {% endif %}
-
 </main>
 {% endblock %}

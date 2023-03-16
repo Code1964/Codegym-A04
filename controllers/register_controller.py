@@ -6,6 +6,7 @@ import sqlite3
 def register():
     """Register user"""
 
+    # POST メソッドの場合
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -13,44 +14,35 @@ def register():
 
         if not username:
             return apology("Must Give Username", 403)
-
-        # 今あるデータベースのユーザーネームと一致していた時はreturn apologyを返す
-        conn = sqlite3.connect("globe.db")
-        c = conn.cursor()
-        c.execute("SELECT username FROM users WHERE username=?", (username,))
-        user = c.fetchone()
-        c.close()
-        conn.close()
-        if user is not None:
-            return apology("Username already exists", 400)
-
-        if not password:
+        elif not password:
             return apology("Must Give Password", 403)
-
-        if not confirmation:
+        elif not confirmation:
             return apology("Must Give Confirmation", 403)
-
-        if password != confirmation:
+        elif password != confirmation:
             return apology("Passwords Do Not Match", 403)
 
-        hash = generate_password_hash(password)
-
         try:
-            # ==== query ====================
+            # 今あるデータベースのユーザーネームと一致していた時はapologyを返す
             conn = sqlite3.connect("globe.db")
             cur = conn.cursor()
-            # 引数はタプルにすることに注意
+            cur.execute("SELECT username FROM users WHERE username=?", (username,))
+            user = cur.fetchone()
+
+            if user is not None:
+                return apology("Username already exists", 400)
+
+            hash = generate_password_hash(password)
+
             cur.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, hash))
             conn.commit()
             cur.close()
             conn.close()
-            # ================================
-        except:
+        except sqlite3.Error:
             return apology("Failed to register to the database.", 500)
 
-        flash('You were successfully register')
+        flash('You were successfully registered')
         return redirect("/")
 
-    # getメソッドのとき
+    # GET メソッドの場合
     else:
         return render_template("register.html")

@@ -8,40 +8,39 @@ from helpers import apology, login_required
 def login():
     """Log user in"""
 
-    # Forget any user_id
+    # ログイン情報をクリア
     session.clear()
 
-    # User reached route via POST (as by submitting a form via POST)
+    # POST メソッドでアクセスされた場合
     if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-        # Ensure username was submitted
-        if not request.form.get("username"):
+        # フォームが正しくなかった場合
+        if not username:
             return apology("must provide username", 403)
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
+        elif not password:
             return apology("must provide password", 403)
 
-        # Query database for username
-        # rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
-
-        # Query database for username
+        # ユーザーのデータベース照会
         conn = sqlite3.connect("globe.db")
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = ?", (request.form.get("username"),))
+        cur.execute("SELECT * FROM users WHERE username = ?", (username,))
         rows = cur.fetchall()
+        cur.close()
+        conn.close()
 
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0][2], request.form.get("password")):
+        # ユーザー名が存在し、パスワードが正しいことを確認
+        if len(rows) != 1 or not check_password_hash(rows[0][2], password):
             return apology("invalid username and/or password", 403)
 
-        # Remember which user has logged in
+        # ログイン情報を記録
         session["user_id"] = rows[0][0]
 
         flash('You were successfully logged in')
-        # Redirect user to home page
+        # ホームページにリダイレクト
         return redirect("/")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    # GET メソッドでアクセスされた場合
     else:
         return render_template("login.html")

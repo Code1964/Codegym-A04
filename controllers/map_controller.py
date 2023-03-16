@@ -7,7 +7,6 @@ from helpers import apology
 
 def map():
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
-    # index.htmlからmap.htmlに送るための処理
     nation_name = request.args.get('nation')
 
     placeIDs = [] # htmlに渡す用の空リスト作成
@@ -25,9 +24,9 @@ def map():
     if nation_name == '国名を選択してください' or not nation_name:
         return render_template("map.html", google_maps_api_key=google_maps_api_key, placeIDs=placeIDs)
 
-    df = pd.read_csv("asti-datr0411wc/r0411world_utf8.csv", sep='\t') # data frameを読み込む
+    # 国情報を読み込む
+    df = pd.read_csv("asti-datr0411wc/r0411world_utf8.csv", sep='\t')
 
-    # 例外処理
     nations = df['name_jps'].values
     if not nation_name in nations:
         return apology("bad argument", 400)
@@ -47,5 +46,4 @@ def map():
     nation_name = df[df.name_jps == nation_name]["name_jps"].values[0]
     nation_name = nation_name.split("（")[0]
 
-    #ここからjavascriptに変数送るのってどうやるの？
     return render_template("map.html", google_maps_api_key=google_maps_api_key, locations=locations, nation_name=nation_name, placeIDs=placeIDs)
