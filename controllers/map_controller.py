@@ -10,17 +10,17 @@ def map():
     # index.htmlからmap.htmlに送るための処理
     nation_name = request.args.get('nation')
 
-    placeIDs = []
-    try:
+    placeIDs = [] # htmlに渡す用の空リスト作成
+    # ログインしていた場合
+    if "user_id" in session:
         conn = sqlite3.connect("globe.db")
         cur = conn.cursor()
-        cur.execute("SELECT placeID FROM favorite WHERE user_id = ?", (session['user_id'],))
+        cur.execute("SELECT placeID FROM favorite WHERE user_id = ?", (session["user_id"],))
         placeIDs = cur.fetchall()
-        placeIDs = [data[0] for data in placeIDs]
+        if placeIDs:
+            placeIDs = [data[0] for data in placeIDs]
         cur.close()
         conn.close()
-    except:
-        return apology("Database operation failed", 400)
 
     if nation_name == '国名を選択してください' or not nation_name:
         return render_template("map.html", google_maps_api_key=google_maps_api_key, placeIDs=placeIDs)

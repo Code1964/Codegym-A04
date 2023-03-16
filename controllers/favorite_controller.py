@@ -3,14 +3,12 @@ import sqlite3
 
 from helpers import apology
 
-# CREATE TABLE favorite (user_id INT NOT NULL, region TEXT NOT NULL, placeID TEXT UNIQUE);
-
 def favorite():
     region = request.args.get("region_name")
     placeID = request.args.get('placeID') # ない場合もある, UNIQUEに設定してある
     if not region:
         return apology("must provide region name", 400)
-    # ==== query ====================
+
     try:
         conn = sqlite3.connect("globe.db")
         cur = conn.cursor()
@@ -21,9 +19,8 @@ def favorite():
         conn.commit()
         cur.close()
         conn.close()
-    except:
+    except sqlite3.Error:
         return apology("Database operation failed", 400)
-    # ================================
 
     if not placeID:
         flash("placeID not found")

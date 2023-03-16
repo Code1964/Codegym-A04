@@ -12,9 +12,13 @@ def change_password():
         new_password = request.form.get("new_password")
         confirmation = request.form.get("confirmation")
 
-        # フォームが正しく送信されなかった場合
-        if not old_password or not new_password or not confirmation:
-            return apology("All fields must be filled", 403)
+        # フォームが正しくなかった場合
+        if not old_password:
+            return apology("must provide old password", 403)
+        elif not new_password:
+            return apology("must provide new password", 403)
+        elif not confirmation:
+            return apology("must provide confirmation", 403)
 
         # 新しいパスワードとその確認が一致しない場合
         if new_password != confirmation:
@@ -37,7 +41,7 @@ def change_password():
         cur.close()
         conn.close()
 
-        # ユーザーIDを忘れたら
+        # ログイン情報をクリア
         session.clear()
 
         flash('You have successfully changed your password!')
