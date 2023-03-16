@@ -8,15 +8,24 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
 from helpers import apology, login_required
+from controllers import (
+    index_controller,
+    map_controller,
+    region_info_controller,
+    login_controller,
+    logout_controller,
+    register_controller,
+    change_password_controller,
+    usage_controller,
+    flashcard_controller,
+    favorite_controller
+    )
 
-from controllers import index_controller, map_controller, region_info_controller, login_controller, logout_controller, register_controller, change_password_controller, usage_controller, flashcard_controller, favorite_controller
-
-# Configure application, flaskのインスタンス化 (https://teratail.com/questions/356066)
+# Configure Flask application
 app = Flask(__name__)
 
-# Ensure templates are auto-reloaded, Trueにすると、テンプレートが変更されたときに再読み込みする。
+# Trueにすると、テンプレートが変更されたときに再読み込みする。
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
 
 # Flaskのデフォルトである(デジタル署名された)cookie内に格納するのではなく、ローカルファイルシステム(ディスク)に格納するようにFlaskを構成
 app.config["SESSION_PERMANENT"] = False
@@ -72,11 +81,6 @@ def register():
 @login_required
 def change_password():
     return change_password_controller.change_password()
-
-@app.route("/mypage", methods=["GET", "POST"])
-@login_required
-def mypage():
-    return mypage_controller.mypage()
 
 @app.route("/flashcard", methods=["GET", "POST"])
 @login_required
