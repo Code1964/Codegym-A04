@@ -199,7 +199,7 @@ function NeighborhoodDiscovery(configuration) {
     // indexからの値がない場合の処理
     else {
       // 既存の位置を入力する
-      document.getElementById("latlng").value = "35.6761917, 139.6503104";
+      document.getElementById("latlng").value = "35.6761919, 139.6503106";
     }
     // 情報ウインドウ表示
     infoWindow.open(widget.map);
@@ -791,7 +791,7 @@ function handleLocationError(browserHasGeolocation, center, map) {
       ? "位置情報の取得を拒否しました"
       : "位置情報を取得できませんでした"
   );
-  map.panTo(widget.center);
+  map.panTo(center);
 }
 
 // ボタンがクリックされたらsearchTypeと文字を変更する
