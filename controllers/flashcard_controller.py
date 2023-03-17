@@ -26,27 +26,24 @@ def flashcard():
         print(detail)
         print("====================================")
 
-        # TODO: insertでDBに登録
-        # sqlite3の例
+        # insertでDBに登録
         # ==== query ====================
-        # conn = sqlite3.connect("globe.db")
-        # cur = conn.cursor()
-        # cur.execute("INSERT INTO flashcards (username, hash) VALUES(?, ?)", (username, hash))
-        # conn.commit()
-        # cur.close()
-        # conn.close()
+        conn = sqlite3.connect("globe.db")
+        cur = conn.cursor()
+        cur.execute("INSERT INTO flashcards (user_id, region, section, title, detail) VALUES(?, ?, ?, ?, ?)", (user_id, region, section, title, detail))
+        conn.commit()
+        cur.close()
+        conn.close()
         # ===============================
 
-    # TODO: selectでDBから取得
-    # sqlite3の例
+    # selectでDBから取得
     # ==== query ====================
-    # conn = sqlite3.connect("globe.db")
-    # cur = conn.cursor()
+    conn = sqlite3.connect("globe.db")
+    cur = conn.cursor()
     # 引数は単体の場合でもタプルにすることに注意
-    # user = cur.execute("SELECT username FROM flashcards WHERE username=?", (username,)).fetchone()
-    # cur.close()
-    # conn.close()
+    flashcards = cur.execute("SELECT * FROM flashcards WHERE user_id=?", (session["user_id"],)).fetchall()
+    cur.close()
+    conn.close()
     # ===============================
 
-    return render_template("flashcard.html")
-    # return render_template("flashcard.html", flashcards=flashcards)
+    return render_template("flashcard.html", flashcards=flashcards)

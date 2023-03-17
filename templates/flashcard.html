@@ -2,7 +2,7 @@
 
 {% block head %}
     <!-- cssファイル読み込み -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/flashcard.scss') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flashcard.css') }}">
     <!-- ローカルjsファイルを読み込み-->
     <script type="text/javascript" src="{{ url_for('static', filename='js/flashcard.js') }}"></script>
 {% endblock %}
@@ -13,40 +13,50 @@
 
 {% block main %}
 <main>
-    <!-- {%  if not flashcard %}
+    {%  if not flashcards %}
     <div>
         <p>単語帳には何も登録されていません</p>
     </div>
 
     {% else %}
-    {% for card in flashcards %}
-    <div>
-        {{region_name}}
-        {{title}}
-    </div>
-    <div>{{detail}}</div>
-    {% endfor %}
-    {% endif %} -->
-
-    <section class="">
-        <div class="flex flex-wrap mx-auto md:flex-nowrap p-12">
-
-            <a href="">
-                <div class="flex w-full">
-                    <div class="relative flex flex-col items-start m-1 transition duration-300 ease-in-out delay-150 transform bg-white shadow-2xl rounded-xl md:w-80 md:-ml-16 md:hover:-translate-x-16 md:hover:-translate-y-8">
-                        <!-- <img class="object-cover object-center w-full rounded-t-xl lg:h-48 md:h-36" src="/assets/images/placeholders/neon-1.jpg" alt="blog" /> -->
-                        <div class="px-6 py-8">
-                            <h4 class="mt-4 text-2xl font-semibold text-neutral-600">
-                                <span class="">Entry</span>
-                            </h4>
-                            <p class="mt-4 text-base font-normal text-gray-500 leading-relax">Install Tailwind CSS without any Javascript Framewrok locally with purgeCSS, enable the dark mode option, prefferences or class is upt to you.</p>
+    <section class="card-flipper">
+        {% for flashcard in flashcards %}
+            <div class="flex flex-wrap mx-auto md:flex-nowrap p-12 flip-card" id="card">
+                <div class="card-front">
+                    <a href="">
+                        <div class="flex w-full">
+                            <div class="relative flex flex-col items-start m-1 transition duration-300 ease-in-out delay-150 transform bg-white shadow-2xl rounded-xl md:w-80 md:-ml-16 md:hover:-translate-x-16 md:hover:-translate-y-8">
+                                <!-- <img class="object-cover object-center w-full rounded-t-xl lg:h-48 md:h-36" src="/assets/images/placeholders/neon-1.jpg" alt="blog" /> -->
+                                <div class="px-6 py-8">
+                                    <h4 class="mt-4 text-2xl font-semibold text-neutral-600">
+                                        <span class="">{{flashcard[3]}}</span>
+                                    </h4>
+                                    <p class="mt-4 text-base font-normal text-gray-500 leading-relax">{{flashcard[1]}}―{{flashcard[2]}}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-            </a>
 
-        </div>
+                <div class="card-back">
+                    <a href="">
+                        <div class="flex w-full">
+                            <div class="relative flex flex-col items-start m-1 transition duration-300 ease-in-out delay-150 transform bg-white shadow-2xl rounded-xl md:w-80 md:-ml-16 md:hover:-translate-x-16 md:hover:-translate-y-8">
+                                <!-- <img class="object-cover object-center w-full rounded-t-xl lg:h-48 md:h-36" src="/assets/images/placeholders/neon-1.jpg" alt="blog" /> -->
+                                <div class="px-6 py-8">
+                                    <h4 class="mt-4 text-2xl font-semibold text-neutral-600">
+                                        <span class=""></span>
+                                    </h4>
+                                    <p class="mt-4 text-base font-normal text-gray-500 leading-relax">{{flashcard[4]}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
     </section>
+    {% endif %}
 
 </main>
 {% endblock %}
