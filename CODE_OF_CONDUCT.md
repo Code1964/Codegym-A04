@@ -1,5 +1,3 @@
-元README.md
-
 # World Voyage
 AA093・AA095・AA097・AA105のチームメンバーで開発しています。
 
