@@ -7,16 +7,16 @@
 {% block main %}
 <main>
     <div class="relative overflow-hidden bg-white">
-        <div class="pt-16 pb-80 sm:pt-24 sm:pb-40 lg:pt-40 lg:pb-48">
-            <div class="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
-                <div class="sm:max-w-lg">
+        <div class="pt-16 pb-20 sm:pt-24 sm:pb-20 lg:pt-40 lg:pb-48">
+            <div class="relative max-w-7xl lg:mx-auto px-4 md:static md:px-6 lg:px-8 text-center lg:text-left">
+                <div class="lg:max-w-lg">
                     <h1 class="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">World Voyage</h1>
                     <p class="mt-4 text-xl text-gray-500">調べたい国や県がある場所の地図をクリックすることでそこの歴史や地理を調べられる、視覚的に楽しんで勉強できるサイトです。</p>
                 </div>
                 <div>
                     <div class="mt-10">
                         <!-- Decorative image grid -->
-                        <div aria-hidden="true" class="pointer-events-none lg:absolute lg:inset-y-0 lg:mx-auto lg:w-full lg:max-w-7xl">
+                        <div aria-hidden="true" class="pointer-events-none lg:absolute lg:inset-y-0 lg:mx-auto lg:w-full lg:max-w-7xl hidden lg:block">
                             <div class="absolute transform sm:left-1/2 sm:top-0 sm:translate-x-8 lg:left-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-8">
                                 <div class="flex items-center space-x-6 lg:space-x-8">
                                     <!-- 画像 -->
@@ -50,10 +50,10 @@
                                 </div>
                             </div>
                         </div>
-                        <form class="w-full max-w-lg" method="GET" action="?">
+                        <form class="w-full lg:max-w-lg" method="GET" action="?">
                             <div>
                                 <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どの国に行きますか？</h1>
-                                <select required class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
+                                <select required class="py-3 px-4 pr-9 block w-1/2 mx-auto border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
                                     <option selected disabled hidden>国名を選択してください</option>
                                     {% for nation in nations %}
                                     <option value="{{nation}}">{{nation}}</option>
@@ -68,6 +68,7 @@
                                     情報を見る
                                 </button>
                             </div>
+                            <img src="/static/images/camera.jpg" alt="" class="object-cover object-center sm:block md:block  lg:hidden xl:hidden mx-auto" />
                         </form>
                     </div>
                 </div>
