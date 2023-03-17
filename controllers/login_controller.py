@@ -23,7 +23,7 @@ def login():
             return apology("must provide password", 403)
 
         # ユーザーのデータベース照会
-        conn = sqlite3.connect("World-Voyage.db")
+        conn = sqlite3.connect("voyage.db")
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE username = ?", (username,))
         rows = cur.fetchall()

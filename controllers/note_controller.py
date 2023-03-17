@@ -11,7 +11,7 @@ def note():
         detail = request.form.get("detail")
 
         # insertでDBに登録
-        conn = sqlite3.connect("World-Voyage.db")
+        conn = sqlite3.connect("voyage.db")
         cur = conn.cursor()
         cur.execute("INSERT INTO flashcards (user_id, region, section, title, detail) VALUES(?, ?, ?, ?, ?)", (user_id, region, section, title, detail))
         conn.commit()
@@ -19,7 +19,7 @@ def note():
         conn.close()
 
     # selectでDBから取得
-    conn = sqlite3.connect("World-Voyage.db")
+    conn = sqlite3.connect("voyage.db")
     cur = conn.cursor()
     notes = cur.execute("SELECT * FROM flashcards WHERE user_id=?", (session["user_id"],)).fetchall()
     cur.close()

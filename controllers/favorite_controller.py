@@ -10,7 +10,7 @@ def favorite():
         return apology("must provide region name", 400)
 
     try:
-        conn = sqlite3.connect("World-Voyage.db")
+        conn = sqlite3.connect("voyage.db")
         cur = conn.cursor()
         if not placeID:
             cur.execute("INSERT INTO favorite (user_id, region, placeID) VALUES(?, ?, ?)", (session["user_id"], region, 'null'))

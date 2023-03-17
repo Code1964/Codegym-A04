@@ -12,7 +12,7 @@ def map():
     placeIDs = [] # htmlに渡す用の空リスト作成
     # ログインしていた場合
     if "user_id" in session:
-        conn = sqlite3.connect("World-Voyage.db")
+        conn = sqlite3.connect("voyage.db")
         cur = conn.cursor()
         cur.execute("SELECT placeID FROM favorite WHERE user_id = ?", (session["user_id"],))
         placeIDs = cur.fetchall()
