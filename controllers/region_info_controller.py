@@ -12,6 +12,7 @@ def region_info():
     region_name = request.args.get('region')
     placeID = request.args.get('placeID') # indexから直接の場合は空
     placeName = request.args.get('placeName')
+    country_name = request.args.get('country')
 
     if placeName:
         return redirect("https://www.google.com/search?q=" + placeName)
@@ -75,4 +76,4 @@ def region_info():
     histories = dict(zip(history_title, history_detail))
     geographies = dict(zip(geography_title, geography_detail))
 
-    return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID)
+    return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID, country_name=country_name)
