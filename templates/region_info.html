@@ -55,8 +55,8 @@
                 <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
                     <p>{{ histories[history] }}</p>
                 </div>
-                <!-- flashcard -->
-                <form action="/flashcard" method="post" class="absolute top-5 right-20">
+                <!-- note -->
+                <form action="/note" method="post" class="absolute top-5 right-20">
                     <input name="region_name" type="hidden" value="{{ region_name }}">
                     <input name="section" type="hidden" value="歴史">
                     <input name="title" type="hidden" value="{{ history }}">
@@ -76,6 +76,7 @@
     <div id="accordion-collapse" data-accordion="collapse">
         {% for geography in geographies %}
         <div class="relative">
+            {% if geographies[geography] %}
             <h2 id="accordion-collapse-heading-3{{ loop.index }}">
                 <button
                     type="button"
@@ -93,8 +94,8 @@
             <div id="accordion-collapse-body-3{{ loop.index }}" class="hidden" aria-labelledby="accordion-collapse-heading-3{{ loop.index }}">
                 <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
                     <p>{{ geographies[geography] }}</p>
-                    <!-- flashcard -->
-                    <form action="/flashcard" method="post" class="absolute top-5 right-20">
+                    <!-- note -->
+                    <form action="/note" method="post" class="absolute top-5 right-20">
                         <input name="region_name" type="hidden" value="{{ region_name }}">
                         <input name="section" type="hidden" value="地理">
                         <input name="title" type="hidden" value="{{ geography }}">
@@ -103,6 +104,7 @@
                     </form>
                 </div>
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

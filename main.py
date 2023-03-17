@@ -17,7 +17,7 @@ from controllers import (
     register_controller,
     change_password_controller,
     usage_controller,
-    flashcard_controller,
+    note_controller,
     favorite_controller
     )
 
@@ -82,10 +82,10 @@ def register():
 def change_password():
     return change_password_controller.change_password()
 
-@app.route("/flashcard", methods=["GET", "POST"])
+@app.route("/note", methods=["GET", "POST"])
 @login_required
-def flashcard():
-    return flashcard_controller.flashcard()
+def note():
+    return note_controller.note()
 
 @app.route("/favorite")
 @login_required

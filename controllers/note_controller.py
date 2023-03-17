@@ -2,7 +2,7 @@ import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import sqlite3
 
-def flashcard():
+def note():
     if request.method == "POST":
         user_id = session["user_id"]
         region = request.form.get("region_name")
@@ -21,8 +21,8 @@ def flashcard():
     # selectでDBから取得
     conn = sqlite3.connect("globe.db")
     cur = conn.cursor()
-    flashcards = cur.execute("SELECT * FROM flashcards WHERE user_id=?", (session["user_id"],)).fetchall()
+    notes = cur.execute("SELECT * FROM flashcards WHERE user_id=?", (session["user_id"],)).fetchall()
     cur.close()
     conn.close()
 
-    return render_template("flashcard.html", flashcards=flashcards)
+    return render_template("note.html", notes=notes)
