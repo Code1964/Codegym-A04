@@ -6,11 +6,11 @@
 
 {% block main %}
 
-<main class='justify-center md:shrink-0 my-9 mx-64'>
+<main class='justify-center md:shrink-0 my-9 lg:mx-64'>
     <div class="flex-auto flex justify-between items-center">
-        <p class="text-6xl">{{ region_name }}
+        <p class="text-4xl md:text-5xl lg:text-5xl font-bold">{{ region_name }}
             {% if region_name != country_name and country_name %}
-            <span class="text-sm">【国名】{{ country_name }}</span>
+            <span class="font-light text-sm">【国名】{{ country_name }}</span>
             {% endif %}
         </p>
         {% if placeID %}
@@ -23,12 +23,12 @@
     </div>
 
     {% if region_image %}
-    <img class="inline" src="{{ region_image }}" alt="images" width="30%" style="display: block; margin: auto;">
+    <img class="m-8 mx-auto w-96 md:w-2/3 lg:w-auto" src="{{ region_image }}" alt="images">
     {% endif %}
 
     {% if wiki_summary %}
     <h1 class="text-3xl text-center my-6">概要</h1>
-    <p>{{ wiki_summary }}</p>
+    <p class="font-normal mx-8">{{ wiki_summary }}</p>
     {% endif %}
 
     {% if histories %}
