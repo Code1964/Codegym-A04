@@ -11,7 +11,7 @@
         <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
         <!-- ローカルのcssファイル読み込み -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/sample.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
         <!-- TailwindCSSファイル読み込み -->
         <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
@@ -36,49 +36,45 @@
                 <a class="no-underline text-white" href="/"> <span class="font-semibold text-3xl tracking-tight">World Voyage</span></a>
             </div>
             <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-            <div class="text-sm lg:flex-grow">
-            </div>
-            <div>
-                <!-- <a href="#" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    テスト用
-                </a> -->
-                <a href="/map" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Map
-                </a>
-                <a href="/usage" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Usage
-                </a>
-                <!-- ログイン・ログアウト・新規登録機能 -->
-                {% if session["user_id"] %}
-                <a href="/flashcard" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Flash card
-                </a>
-                <a href="/change_password" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Change password
-                </a>
-                <a href="/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Log Out
-                </a>
-                {% else %}
-                <a href="/register" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Register
-                </a>
-                <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                    Log In
-                </a>
-                {% endif %}
-            </div>
+                <div class="text-sm lg:flex-grow"></div>
+                <div>
+                    <a href="/map" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Map
+                    </a>
+                    <a href="/usage" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Usage
+                    </a>
+                    <!-- ログインしていた場合 -->
+                    {% if session["user_id"] %}
+                    <a href="/flashcard" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Flash card
+                    </a>
+                    <a href="/change_password" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Change password
+                    </a>
+                    <a href="/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Log Out
+                    </a>
+                    {% else %}
+                    <a href="/register" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Register
+                    </a>
+                    <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
+                        Log In
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </nav>
 
         <!-- フラッシュ機能 -->
         {% if get_flashed_messages() %}
-            <header>
-                <!-- https://flowbite.com/docs/components/alerts/ -->
-                <div class="p-4 mb-4 text-center text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
-                    <div>{{ get_flashed_messages() | join(" ") }}</div>
-                </div>
-            </header>
+        <header>
+            <!-- https://flowbite.com/docs/components/alerts/ -->
+            <div class="p-4 mb-4 text-center text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
+                <div>{{ get_flashed_messages() | join(" ") }}</div>
+            </div>
+        </header>
         {% endif %}
 
         <!-- containerの属性をそれぞれ変えるためにmainブロックはそれぞれの箇所に配置した -->

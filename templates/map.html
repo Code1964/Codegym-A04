@@ -17,15 +17,17 @@
           "capabilities": {"search":true,"distances":false,"directions":false,"contacts":true,"atmospheres":true,"thumbnails":true},
           // ピンを置く位置(追加する場合はplace IDを取得する)
           "pois": [
-            {"placeId": "ChIJOyg_UAfzGGARc6YWLR98LOE"},
-            {"placeId": "ChIJ3XYIepA5AWAR-uzxmllSqgg"},
-            {"placeId": "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI"},
-            {"placeId": "ChIJMaLcFIJZGGARKMQf8vX-Qws"},
-            {"placeId": "ChIJqUFu_8qdWFERkbMg_pPSNSQ"},
+            // {"placeId": "ChIJOyg_UAfzGGARc6YWLR98LOE"},
+            // {"placeId": "ChIJ3XYIepA5AWAR-uzxmllSqgg"},
+            // {"placeId": "ChIJW-T2Wt7Gt4kRKl2I1CJFUsI"},
+            // {"placeId": "ChIJMaLcFIJZGGARKMQf8vX-Qws"},
+            // {"placeId": "ChIJqUFu_8qdWFERkbMg_pPSNSQ"},
             // ここにfor文でPlaceIDを挿入する
-            // {% for nation in nations %}
-            //   {"placeId": "{{ placeID }}"},
-            // {% endfor %}
+            {% if placeIDs %}
+            {% for placeID in placeIDs %}
+              {"placeId": "{{ placeID }}"},
+            {% endfor %}
+            {% endif %}
           ],
           "mapRadius": 9999999,
           // 初期の位置設定

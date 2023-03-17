@@ -1,5 +1,4 @@
 # Use an official Python runtime as a parent image
-# 最新の3.10ではなく3.9にする, slimにして使用頻度の低いツールやライブラリを除外したスリムなDockerイメージを作成
 FROM python:3.9-slim
 
 # Set the working directory to /app

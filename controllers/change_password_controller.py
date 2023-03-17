@@ -6,23 +6,22 @@ from helpers import apology, login_required
 def change_password():
     """Change user's password"""
 
-    # User reached route via POST (as by submitting a form via POST)
+    # POST メソッドでアクセスされた場合
     if request.method == "POST":
+        old_password = request.form.get("old_password")
+        new_password = request.form.get("new_password")
+        confirmation = request.form.get("confirmation")
 
-        # 古いパスワードが送信
-        if not request.form.get("old_password"):
+        # フォームが正しくなかった場合
+        if not old_password:
             return apology("must provide old password", 403)
-
-        # 新しいパスワードが送信
-        elif not request.form.get("new_password"):
+        elif not new_password:
             return apology("must provide new password", 403)
-
-        # 確認パスワードが送信
-        elif not request.form.get("confirmation"):
-            return apology("must confirm new password", 403)
+        elif not confirmation:
+            return apology("must provide confirmation", 403)
 
         # 新しいパスワードとその確認が一致しない場合
-        elif request.form.get("new_password") != request.form.get("confirmation"):
+        if new_password != confirmation:
             return apology("new password and confirmation must match", 403)
 
         # ユーザーのデータベースを照会
@@ -32,22 +31,23 @@ def change_password():
         user = cur.fetchone()
 
         # 古いパスワードが正しいか確認する
-        if not check_password_hash(user[2], request.form.get("old_password")):
+        if not check_password_hash(user[2], old_password):
             return apology("invalid old password", 403)
 
         # パスワードをデータベースにアップロード
-        new_hashed_password = generate_password_hash(request.form.get("new_password"))
+        new_hashed_password = generate_password_hash(new_password)
         cur.execute("UPDATE users SET hash = ? WHERE id = ?", (new_hashed_password, session["user_id"]))
         conn.commit()
+        cur.close()
         conn.close()
 
-        # ユーザーIDを忘れたら
+        # ログイン情報をクリア
         session.clear()
 
-        flash('You were successfully change password!')
+        flash('You have successfully changed your password!')
         # ホームページにリダイレクト
         return redirect("/")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    # GET メソッドでアクセスされた場合
     else:
         return render_template("change_password.html")
