@@ -25,7 +25,7 @@ def change_password():
             return apology("new password and confirmation must match", 403)
 
         # ユーザーのデータベースを照会
-        conn = sqlite3.connect("globe.db")
+        conn = sqlite3.connect("World-Voyage.db")
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],))
         user = cur.fetchone()
@@ -44,7 +44,7 @@ def change_password():
         # ログイン情報をクリア
         session.clear()
 
-        flash('You have successfully changed your password!')
+        flash('パスワードを変更しました！')
         # ホームページにリダイレクト
         return redirect("/")
 

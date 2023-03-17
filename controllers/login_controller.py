@@ -23,7 +23,7 @@ def login():
             return apology("must provide password", 403)
 
         # ユーザーのデータベース照会
-        conn = sqlite3.connect("globe.db")
+        conn = sqlite3.connect("World-Voyage.db")
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE username = ?", (username,))
         rows = cur.fetchall()
@@ -37,7 +37,7 @@ def login():
         # ログイン情報を記録
         session["user_id"] = rows[0][0]
 
-        flash('You were successfully logged in')
+        flash('ログインが完了しました！')
         # ホームページにリダイレクト
         return redirect("/")
 
