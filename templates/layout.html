@@ -35,10 +35,10 @@
                 <div class="text-sm lg:flex-grow"></div>
                 <div>
                     <a href="/map" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Map
+                        地図
                     </a>
                     <a href="/usage" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Usage
+                        使い方
                     </a>
                     <!-- ログインしていた場合 -->
                     {% if session["user_id"] %}
@@ -46,17 +46,17 @@
                         Note
                     </a>
                     <a href="/change_password" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Change password
+                        パスワード変更
                     </a>
                     <a href="/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Log Out
+                        ログアウト
                     </a>
                     {% else %}
                     <a href="/register" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Register
+                        登録
                     </a>
                     <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0 no-underline">
-                        Log In
+                        ログイン
                     </a>
                     {% endif %}
                 </div>

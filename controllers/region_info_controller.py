@@ -21,7 +21,7 @@ def region_info():
     if not region_name:
         flash("国/地域を選択してください")
         return redirect(url_for('map'))
-    if region_name == "undefined":
+    if region_name == "見つかりません":
         flash("国/地域が選択できていません")
         return redirect(url_for('map'))
 
