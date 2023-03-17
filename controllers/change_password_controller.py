@@ -44,7 +44,7 @@ def change_password():
         # ログイン情報をクリア
         session.clear()
 
-        flash('You have successfully changed your password!')
+        flash('パスワードを変更しました！')
         # ホームページにリダイレクト
         return redirect("/")
 

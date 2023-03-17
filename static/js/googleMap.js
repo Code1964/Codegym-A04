@@ -174,7 +174,7 @@ function NeighborhoodDiscovery(configuration) {
     // 地図のパノラマを取得する
     panorama = widget.map.getStreetView();
     // Zoom量簡易変更ボタン実装
-    const zoomType = ["国", "県", "市"];
+    const zoomType = ["遠", "中", "近"];
     const zoomControlDiv = document.createElement("div");
     widget.map.controls[google.maps.ControlPosition.LEFT_TOP].push(
       zoomControlDiv
@@ -809,11 +809,11 @@ function changeSearchType(type) {
 
 // ボタンがクリックされたらズーム状態を変更する
 function changeZoomType(zoomType) {
-  if (zoomType === "国") {
+  if (zoomType === "遠") {
     zoom = 5;
-  } else if (zoomType === "県") {
+  } else if (zoomType === "中") {
     zoom = 10;
-  } else if (zoomType === "市") {
+  } else if (zoomType === "近") {
     zoom = 15;
   }
   // マップのズームを変更する

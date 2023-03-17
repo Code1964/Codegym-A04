@@ -40,7 +40,7 @@ def register():
         except sqlite3.Error:
             return apology("Failed to register to the database.", 500)
 
-        flash('You were successfully registered')
+        flash('登録が完了しました！')
         return redirect("/")
 
     # GET メソッドの場合

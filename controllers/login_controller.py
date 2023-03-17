@@ -37,7 +37,7 @@ def login():
         # ログイン情報を記録
         session["user_id"] = rows[0][0]
 
-        flash('You were successfully logged in')
+        flash('ログインが完了しました！')
         # ホームページにリダイレクト
         return redirect("/")
 
