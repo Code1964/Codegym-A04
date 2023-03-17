@@ -73,4 +73,7 @@ def region_info():
     histories = dict(zip(history_title, history_detail))
     geographies = dict(zip(geography_title, geography_detail))
 
-    return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID, country_name=country_name)
+    if not country_name: # indexから直接国が渡される場合
+        return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID)
+    else:
+        return render_template("region_info.html", region_name=page.title, wiki_summary=wiki_summary, region_image=region_image, histories=histories, geographies=geographies, placeID=placeID, country_name=country_name)
