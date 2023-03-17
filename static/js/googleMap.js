@@ -199,7 +199,7 @@ function NeighborhoodDiscovery(configuration) {
     // indexからの値がない場合の処理
     else {
       // 既存の位置を入力する
-      document.getElementById("latlng").value = "35.6761919, 139.6503106";
+      document.getElementById("latlng").value = "35.6761917, 139.6503104";
     }
     // 情報ウインドウ表示
     infoWindow.open(widget.map);
@@ -208,7 +208,6 @@ function NeighborhoodDiscovery(configuration) {
       geocodeLatLng(geocoder, widget.map);
     });
     // 位置情報を取得できた場合とできなかった場合の処理
-    // TODO: 以下、重複している部分があるのでfunction化する
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -228,18 +227,12 @@ function NeighborhoodDiscovery(configuration) {
           infoWindow.setContent("あなたの現在地はこちら！！");
         },
         () => {
-          // 情報ウインドウを入力する
-          infoWindow.setPosition(widget.center);
-          infoWindow.setContent("位置情報の取得を拒否しました");
-          widget.map.panTo(widget.center);
+          handleLocationError(true, widget.center, widget.map);
         }
       );
     } else {
-      infoWindow.setPosition(widget.center);
-      infoWindow.setContent("位置情報を取得できませんでした");
-      widget.map.panTo(widget.center);
+      handleLocationError(false, widget.center, widget.map);
     }
-    // TODO: ここまで
     widget.map.fitBounds(widget.mapBounds, /* padding= */ 0);
     widget.map.addListener("click", (e) => {
       // クリックした場所にカメラが移動する
@@ -691,7 +684,6 @@ function geocodeLatLng(geocoder, map) {
 }
 
 // 場所をクリックすると調べるフォームに飛ぶ
-// TODO function化 function addressProcess(result, number)みたいにする
 function clickNoArea(latlng, geocoder) {
   geocoder.geocode({ location: latlng }, function (results) {
     let clickAddress;
@@ -789,19 +781,17 @@ function clickNoArea(latlng, geocoder) {
     }
   });
 }
-// TODO ここまで
 
 // 位置情報の取得でエラーが出た場合
-function handleLocationError(browserHasGeolocation, infoWindow) {
-  // デフォルトの設定を東京にする
-  const centerLatLng = { lat: 35.681236, lng: 139.767125 };
+function handleLocationError(browserHasGeolocation, center, map) {
   // インフォウインドウを設置する
-  infoWindow.setPosition(centerLatLng);
+  infoWindow.setPosition(center);
   infoWindow.setContent(
     browserHasGeolocation
-      ? "地理位置情報許可が拒否されました。"
-      : "お使いのブラウザは位置情報をサポートしていません。"
+      ? "位置情報の取得を拒否しました"
+      : "位置情報を取得できませんでした"
   );
+  map.panTo(widget.center);
 }
 
 // ボタンがクリックされたらsearchTypeと文字を変更する
