@@ -2320,10 +2320,6 @@ input:checked + .toggle-bg {
     margin-left: -4rem;
   }
 
-  .md\:h-36 {
-    height: 9rem;
-  }
-
   .md\:w-1\/2 {
     width: 50%;
   }
@@ -2389,10 +2385,6 @@ input:checked + .toggle-bg {
 
   .lg\:flex {
     display: flex;
-  }
-
-  .lg\:h-48 {
-    height: 12rem;
   }
 
   .lg\:w-auto {

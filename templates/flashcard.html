@@ -12,21 +12,19 @@
 {% endblock %}
 
 {% block main %}
-<main>
+<main class="justify-center md:shrink-0 my-9 mx-64">
     {%  if not flashcards %}
     <div>
         <p>単語帳には何も登録されていません</p>
     </div>
-
     {% else %}
-    <section class="card-flipper">
+    <!-- <section class="card-flipper">
         {% for flashcard in flashcards %}
             <div class="flex flex-wrap mx-auto md:flex-nowrap p-12 flip-card" id="card">
                 <div class="card-front">
                     <a href="">
                         <div class="flex w-full">
                             <div class="relative flex flex-col items-start m-1 transition duration-300 ease-in-out delay-150 transform bg-white shadow-2xl rounded-xl md:w-80 md:-ml-16 md:hover:-translate-x-16 md:hover:-translate-y-8">
-                                <!-- <img class="object-cover object-center w-full rounded-t-xl lg:h-48 md:h-36" src="/assets/images/placeholders/neon-1.jpg" alt="blog" /> -->
                                 <div class="px-6 py-8">
                                     <h4 class="mt-4 text-2xl font-semibold text-neutral-600">
                                         <span class="">{{flashcard[3]}}</span>
@@ -42,7 +40,6 @@
                     <a href="">
                         <div class="flex w-full">
                             <div class="relative flex flex-col items-start m-1 transition duration-300 ease-in-out delay-150 transform bg-white shadow-2xl rounded-xl md:w-80 md:-ml-16 md:hover:-translate-x-16 md:hover:-translate-y-8">
-                                <!-- <img class="object-cover object-center w-full rounded-t-xl lg:h-48 md:h-36" src="/assets/images/placeholders/neon-1.jpg" alt="blog" /> -->
                                 <div class="px-6 py-8">
                                     <h4 class="mt-4 text-2xl font-semibold text-neutral-600">
                                         <span class=""></span>
@@ -55,7 +52,45 @@
                 </div>
             </div>
         {% endfor %}
-    </section>
+    </section> -->
+
+    <h1 class="text-4xl text-center font-bold leading-tight mb-6">Something</h1>
+    <!-- アコーディオン -->
+    <div id="accordion-collapse" data-accordion="collapse">
+        {% for flashcard in flashcards %}
+        <div class="relative">
+            <h2 id="accordion-collapse-heading-{{ loop.index }}">
+                <button
+                    type="button"
+                    class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    data-accordion-target="#accordion-collapse-body-{{ loop.index }}"
+                    aria-expanded="false"
+                    aria-controls="accordion-collapse-body-{{ loop.index }}"
+                >
+                    <!-- <span>{{ history }}</span> -->
+                    <h5 class="text-2xl text-center">
+                        <span>{{ flashcard[1] }}  ({{ flashcard[2] }})  {{ flashcard[3] }}</span>
+                    </h5>
+
+                    <!-- <h4 class="mt-4 text-2xl text-center font-semibold text-neutral-600">
+                        <span class="">{{ flashcard[1] }} ― {{ flashcard[2] }} - {{ flashcard[3] }}</span>
+                    </h4> -->
+                    <!-- <p class="mt-4 text-base font-normal text-gray-500 leading-relax">{{flashcard[1]}}―{{flashcard[2]}}</p> -->
+
+                    <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </h2>
+            <div id="accordion-collapse-body-{{ loop.index }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ loop.index }}">
+                <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                    <p>{{flashcard[4]}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     {% endif %}
 
 </main>
