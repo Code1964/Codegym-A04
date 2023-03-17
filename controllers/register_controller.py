@@ -23,7 +23,7 @@ def register():
 
         try:
             # 今あるデータベースのユーザーネームと一致していた時はapologyを返す
-            conn = sqlite3.connect("globe.db")
+            conn = sqlite3.connect("World-Voyage.db")
             cur = conn.cursor()
             cur.execute("SELECT username FROM users WHERE username=?", (username,))
             user = cur.fetchone()
