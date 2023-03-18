@@ -11,7 +11,7 @@
             <div class="relative max-w-7xl lg:mx-auto px-4 md:static md:px-6 lg:px-8 text-center lg:text-left">
                 <div class="lg:max-w-lg">
                     <h1 class="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">World Voyage</h1>
-                    <p class="mt-4 text-xl text-gray-500">調べたい国や県がある場所の地図をクリックすることでそこの歴史や地理を調べられる、視覚的に楽しんで勉強できるサイトです。</p>
+                    <p class="mt-4 text-xl text-gray-500">調べたい国や県がある場所の地図を<br class="lg:hidden inline">クリックすることでそこの歴史や地理を調べられる、<br class="lg:hidden inline">視覚的に楽しんで勉強できるサイトです。</p>
                 </div>
                 <div>
                     <div class="mt-10">
@@ -53,7 +53,7 @@
                         <form class="w-full lg:max-w-lg" method="GET" action="?">
                             <div>
                                 <h1 class="mt-1 text-lg font-semibold text-black sm:text-slate-900 md:text-2xl dark:sm:text-white py-3 px-4 pr-9 block">どの国に行きますか？</h1>
-                                <select required class="py-3 px-4 pr-9 block w-1/2 mx-auto border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
+                                <select required class="py-3 px-4 pr-9 block w-full mx-auto border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" name="nation">
                                     <option selected disabled hidden>国名を選択してください</option>
                                     {% for nation in nations %}
                                     <option value="{{nation}}">{{nation}}</option>
